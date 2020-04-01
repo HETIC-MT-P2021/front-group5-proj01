@@ -1,0 +1,14 @@
+# Distribution
+app/build/
+
+# elm-package generated files
+app/elm-stuff
+
+# elm-repl generated files
+app/repl-temp-*
+
+# Dependency directories
+app/node_modules
+
+# Desktop Services Store on macOS
+.DS_Store
