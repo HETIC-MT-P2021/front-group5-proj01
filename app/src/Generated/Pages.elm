@@ -15,7 +15,6 @@ import Pages.About
 import Pages.Home
 import Pages.NotFound
 import Pages.Categories.Top
-import Pages.Images.Top
 import Pages.Categories.Create
 import Pages.Images.Create
 
@@ -30,7 +29,6 @@ type Model
     | Home_Model Pages.Home.Model
     | NotFound_Model Pages.NotFound.Model
     | Categories_Top_Model Pages.Categories.Top.Model
-    | Images_Top_Model Pages.Images.Top.Model
     | Categories_Create_Model Pages.Categories.Create.Model
     | Images_Create_Model Pages.Images.Create.Model
 
@@ -41,7 +39,6 @@ type Msg
     | Home_Msg Pages.Home.Msg
     | NotFound_Msg Pages.NotFound.Msg
     | Categories_Top_Msg Pages.Categories.Top.Msg
-    | Images_Top_Msg Pages.Images.Top.Msg
     | Categories_Create_Msg Pages.Categories.Create.Msg
     | Images_Create_Msg Pages.Images.Create.Msg
 
@@ -63,7 +60,6 @@ type alias UpgradedPages =
     , home : UpgradedPage Pages.Home.Flags Pages.Home.Model Pages.Home.Msg
     , notFound : UpgradedPage Pages.NotFound.Flags Pages.NotFound.Model Pages.NotFound.Msg
     , categories_top : UpgradedPage Pages.Categories.Top.Flags Pages.Categories.Top.Model Pages.Categories.Top.Msg
-    , images_top : UpgradedPage Pages.Images.Top.Flags Pages.Images.Top.Model Pages.Images.Top.Msg
     , categories_create : UpgradedPage Pages.Categories.Create.Flags Pages.Categories.Create.Model Pages.Categories.Create.Msg
     , images_create : UpgradedPage Pages.Images.Create.Flags Pages.Images.Create.Model Pages.Images.Create.Msg
     }
@@ -76,7 +72,6 @@ pages =
     , home = Pages.Home.page |> Page.upgrade Home_Model Home_Msg
     , notFound = Pages.NotFound.page |> Page.upgrade NotFound_Model NotFound_Msg
     , categories_top = Pages.Categories.Top.page |> Page.upgrade Categories_Top_Model Categories_Top_Msg
-    , images_top = Pages.Images.Top.page |> Page.upgrade Images_Top_Model Images_Top_Msg
     , categories_create = Pages.Categories.Create.page |> Page.upgrade Categories_Create_Model Categories_Create_Msg
     , images_create = Pages.Images.Create.page |> Page.upgrade Images_Create_Model Images_Create_Msg
     }
@@ -103,9 +98,6 @@ init route =
         
         Route.Categories_Top ->
             pages.categories_top.init ()
-        
-        Route.Images_Top ->
-            pages.images_top.init ()
         
         Route.Categories_Create ->
             pages.categories_create.init ()
@@ -135,9 +127,6 @@ update bigMsg bigModel =
         
         ( Categories_Top_Msg msg, Categories_Top_Model model ) ->
             pages.categories_top.update msg model
-        
-        ( Images_Top_Msg msg, Images_Top_Model model ) ->
-            pages.images_top.update msg model
         
         ( Categories_Create_Msg msg, Categories_Create_Model model ) ->
             pages.categories_create.update msg model
@@ -170,9 +159,6 @@ bundle bigModel =
         
         Categories_Top_Model model ->
             pages.categories_top.bundle model
-        
-        Images_Top_Model model ->
-            pages.images_top.bundle model
         
         Categories_Create_Model model ->
             pages.categories_create.bundle model

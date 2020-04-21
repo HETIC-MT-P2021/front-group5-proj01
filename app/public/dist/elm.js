@@ -10872,7 +10872,6 @@ var $author$project$Generated$Route$Categories_Create = {$: 'Categories_Create'}
 var $author$project$Generated$Route$Categories_Top = {$: 'Categories_Top'};
 var $author$project$Generated$Route$Home = {$: 'Home'};
 var $author$project$Generated$Route$Images_Create = {$: 'Images_Create'};
-var $author$project$Generated$Route$Images_Top = {$: 'Images_Top'};
 var $author$project$Generated$Route$Top = {$: 'Top'};
 var $elm$url$Url$Parser$Parser = function (a) {
 	return {$: 'Parser', a: a};
@@ -10986,10 +10985,6 @@ var $author$project$Generated$Route$routes = $elm$url$Url$Parser$oneOf(
 			$elm$url$Url$Parser$s('categories')),
 			A2(
 			$elm$url$Url$Parser$map,
-			$author$project$Generated$Route$Images_Top,
-			$elm$url$Url$Parser$s('images')),
-			A2(
-			$elm$url$Url$Parser$map,
 			$author$project$Generated$Route$Categories_Create,
 			A2(
 				$elm$url$Url$Parser$slash,
@@ -11037,12 +11032,6 @@ var $author$project$Generated$Pages$Images_Create_Model = function (a) {
 };
 var $author$project$Generated$Pages$Images_Create_Msg = function (a) {
 	return {$: 'Images_Create_Msg', a: a};
-};
-var $author$project$Generated$Pages$Images_Top_Model = function (a) {
-	return {$: 'Images_Top_Model', a: a};
-};
-var $author$project$Generated$Pages$Images_Top_Msg = function (a) {
-	return {$: 'Images_Top_Msg', a: a};
 };
 var $author$project$Generated$Pages$NotFound_Model = function (a) {
 	return {$: 'NotFound_Model', a: a};
@@ -11152,86 +11141,101 @@ var $author$project$Pages$Home$view = {
 };
 var $author$project$Pages$Home$page = $author$project$Page$static(
 	{view: $author$project$Pages$Home$view});
-var $author$project$Pages$Images$Create$Model = function (image) {
-	return {image: image};
+var $ryannhg$elm_spa$Spa$Advanced$element = function (page) {
+	return {
+		init: F2(
+			function (_v0, flags) {
+				return function (_v1) {
+					var model = _v1.a;
+					var cmd = _v1.b;
+					return _Utils_Tuple3(model, cmd, $elm$core$Platform$Cmd$none);
+				}(
+					page.init(flags));
+			}),
+		subscriptions: $elm$core$Basics$always(page.subscriptions),
+		update: F3(
+			function (_v2, msg, model) {
+				return function (_v3) {
+					var model_ = _v3.a;
+					var cmd = _v3.b;
+					return _Utils_Tuple3(model_, cmd, $elm$core$Platform$Cmd$none);
+				}(
+					A2(page.update, msg, model));
+			}),
+		view: $elm$core$Basics$always(page.view)
+	};
 };
-var $author$project$Pages$Images$Create$init = $author$project$Pages$Images$Create$Model($elm$core$Maybe$Nothing);
-var $author$project$Pages$Images$Create$update = F2(
-	function (msg, model) {
-		var file = msg.a;
-		return _Utils_update(
-			model,
-			{
-				image: $elm$core$Maybe$Just(file)
-			});
-	});
-var $author$project$Pages$Images$Create$GotSelectedFile = function (a) {
-	return {$: 'GotSelectedFile', a: a};
+var $ryannhg$elm_spa$Spa$element = $ryannhg$elm_spa$Spa$Advanced$element;
+var $author$project$Page$element = $ryannhg$elm_spa$Spa$element;
+var $author$project$Pages$Images$Create$init = function (_v0) {
+	return _Utils_Tuple2(
+		{
+			plant: {photoUrl: ''}
+		},
+		$elm$core$Platform$Cmd$none);
+};
+var $author$project$Pages$Images$Create$subscriptions = function (model) {
+	return $elm$core$Platform$Sub$none;
+};
+var $author$project$Pages$Images$Create$UserSelectedImage = function (a) {
+	return {$: 'UserSelectedImage', a: a};
 };
 var $elm$time$Time$Posix = function (a) {
 	return {$: 'Posix', a: a};
 };
 var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
-var $elm$file$File$decoder = _File_decoder;
-var $author$project$Pages$Images$Create$filesDecoder = A2(
-	$elm$json$Json$Decode$at,
-	_List_fromArray(
-		['target', 'files']),
-	$elm$file$File$decoder);
-var $elm$json$Json$Encode$bool = _Json_wrap;
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
+var $elm$file$File$Select$file = F2(
+	function (mimes, toMsg) {
 		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
+			$elm$core$Task$perform,
+			toMsg,
+			_File_uploadOne(mimes));
 	});
-var $elm$html$Html$Attributes$multiple = $elm$html$Html$Attributes$boolProperty('multiple');
+var $author$project$Pages$Images$Create$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'NoOp':
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+			case 'UserSelectedNewImageUpload':
+				return _Utils_Tuple2(
+					model,
+					A2(
+						$elm$file$File$Select$file,
+						_List_fromArray(
+							['image/*']),
+						$author$project$Pages$Images$Create$UserSelectedImage));
+			default:
+				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+		}
+	});
+var $author$project$Pages$Images$Create$UserSelectedNewImageUpload = {$: 'UserSelectedNewImageUpload'};
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
 var $author$project$Pages$Images$Create$view = function (model) {
 	return {
 		body: _List_fromArray(
 			[
+				$elm$html$Html$text('Uploader une nouvelle image avec les détails'),
 				A2(
-				$elm$html$Html$div,
-				_List_Nil,
+				$elm$html$Html$img,
 				_List_fromArray(
 					[
-						A2(
-						$elm$html$Html$input,
-						_List_fromArray(
-							[
-								$elm$html$Html$Attributes$type_('file'),
-								$elm$html$Html$Attributes$multiple(false),
-								A2(
-								$elm$html$Html$Events$on,
-								'change',
-								A2($elm$json$Json$Decode$map, $author$project$Pages$Images$Create$GotSelectedFile, $author$project$Pages$Images$Create$filesDecoder))
-							]),
-						_List_Nil)
-					])),
-				A2($elm$html$Html$div, _List_Nil, _List_Nil)
+						$elm$html$Html$Attributes$class('preview'),
+						$elm$html$Html$Attributes$src(model.plant.photoUrl),
+						$elm$html$Html$Events$onClick($author$project$Pages$Images$Create$UserSelectedNewImageUpload)
+					]),
+				_List_Nil)
 			]),
 		title: 'Ajout d\'une nouvelle image'
 	};
 };
-var $author$project$Pages$Images$Create$page = $author$project$Page$sandbox(
-	{init: $author$project$Pages$Images$Create$init, update: $author$project$Pages$Images$Create$update, view: $author$project$Pages$Images$Create$view});
-var $author$project$Pages$Images$Top$init = {};
-var $author$project$Pages$Images$Top$update = F2(
-	function (msg, model) {
-		return {};
-	});
-var $author$project$Pages$Images$Top$view = function (model) {
-	return {
-		body: _List_fromArray(
-			[
-				$elm$html$Html$text('Images.Top')
-			]),
-		title: 'Images.Top'
-	};
-};
-var $author$project$Pages$Images$Top$page = $author$project$Page$sandbox(
-	{init: $author$project$Pages$Images$Top$init, update: $author$project$Pages$Images$Top$update, view: $author$project$Pages$Images$Top$view});
+var $author$project$Pages$Images$Create$page = $author$project$Page$element(
+	{init: $author$project$Pages$Images$Create$init, subscriptions: $author$project$Pages$Images$Create$subscriptions, update: $author$project$Pages$Images$Create$update, view: $author$project$Pages$Images$Create$view});
 var $author$project$Pages$NotFound$view = {
 	body: _List_fromArray(
 		[
@@ -11312,7 +11316,6 @@ var $author$project$Generated$Pages$pages = {
 	categories_top: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Categories_Top_Model, $author$project$Generated$Pages$Categories_Top_Msg, $author$project$Pages$Categories$Top$page),
 	home: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Home_Model, $author$project$Generated$Pages$Home_Msg, $author$project$Pages$Home$page),
 	images_create: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Images_Create_Model, $author$project$Generated$Pages$Images_Create_Msg, $author$project$Pages$Images$Create$page),
-	images_top: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Images_Top_Model, $author$project$Generated$Pages$Images_Top_Msg, $author$project$Pages$Images$Top$page),
 	notFound: A3($author$project$Page$upgrade, $author$project$Generated$Pages$NotFound_Model, $author$project$Generated$Pages$NotFound_Msg, $author$project$Pages$NotFound$page),
 	top: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Top_Model, $author$project$Generated$Pages$Top_Msg, $author$project$Pages$Top$page)
 };
@@ -11328,8 +11331,6 @@ var $author$project$Generated$Pages$init = function (route) {
 			return $author$project$Generated$Pages$pages.notFound.init(_Utils_Tuple0);
 		case 'Categories_Top':
 			return $author$project$Generated$Pages$pages.categories_top.init(_Utils_Tuple0);
-		case 'Images_Top':
-			return $author$project$Generated$Pages$pages.images_top.init(_Utils_Tuple0);
 		case 'Categories_Create':
 			return $author$project$Generated$Pages$pages.categories_create.init(_Utils_Tuple0);
 		default:
@@ -11385,9 +11386,6 @@ var $author$project$Generated$Pages$bundle = function (bigModel) {
 		case 'Categories_Top_Model':
 			var model = bigModel.a;
 			return $author$project$Generated$Pages$pages.categories_top.bundle(model);
-		case 'Images_Top_Model':
-			var model = bigModel.a;
-			return $author$project$Generated$Pages$pages.images_top.bundle(model);
 		case 'Categories_Create_Model':
 			var model = bigModel.a;
 			return $author$project$Generated$Pages$pages.categories_create.bundle(model);
@@ -11472,7 +11470,7 @@ var $elm$url$Url$toString = function (url) {
 var $author$project$Generated$Pages$update = F2(
 	function (bigMsg, bigModel) {
 		var _v0 = _Utils_Tuple2(bigMsg, bigModel);
-		_v0$8:
+		_v0$7:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'Top_Msg':
@@ -11481,7 +11479,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.top.update, msg, model);
 					} else {
-						break _v0$8;
+						break _v0$7;
 					}
 				case 'About_Msg':
 					if (_v0.b.$ === 'About_Model') {
@@ -11489,7 +11487,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.about.update, msg, model);
 					} else {
-						break _v0$8;
+						break _v0$7;
 					}
 				case 'Home_Msg':
 					if (_v0.b.$ === 'Home_Model') {
@@ -11497,7 +11495,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.home.update, msg, model);
 					} else {
-						break _v0$8;
+						break _v0$7;
 					}
 				case 'NotFound_Msg':
 					if (_v0.b.$ === 'NotFound_Model') {
@@ -11505,7 +11503,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.notFound.update, msg, model);
 					} else {
-						break _v0$8;
+						break _v0$7;
 					}
 				case 'Categories_Top_Msg':
 					if (_v0.b.$ === 'Categories_Top_Model') {
@@ -11513,15 +11511,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.categories_top.update, msg, model);
 					} else {
-						break _v0$8;
-					}
-				case 'Images_Top_Msg':
-					if (_v0.b.$ === 'Images_Top_Model') {
-						var msg = _v0.a.a;
-						var model = _v0.b.a;
-						return A2($author$project$Generated$Pages$pages.images_top.update, msg, model);
-					} else {
-						break _v0$8;
+						break _v0$7;
 					}
 				case 'Categories_Create_Msg':
 					if (_v0.b.$ === 'Categories_Create_Model') {
@@ -11529,7 +11519,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.categories_create.update, msg, model);
 					} else {
-						break _v0$8;
+						break _v0$7;
 					}
 				default:
 					if (_v0.b.$ === 'Images_Create_Model') {
@@ -11537,7 +11527,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.images_create.update, msg, model);
 					} else {
-						break _v0$8;
+						break _v0$7;
 					}
 			}
 		}
@@ -11562,9 +11552,6 @@ var $author$project$Generated$Route$toHref = function (route) {
 			case 'Categories_Top':
 				return _List_fromArray(
 					['categories']);
-			case 'Images_Top':
-				return _List_fromArray(
-					['images']);
 			case 'Categories_Create':
 				return _List_fromArray(
 					['categories', 'create']);
@@ -11810,4 +11797,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$UrlChanged, onUrlRequest: $author$project$Main$LinkClicked, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.About.Msg":{"args":[],"type":"Basics.Never"},"Pages.Home.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"About_Msg":["Pages.About.Msg"],"Home_Msg":["Pages.Home.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Categories_Top_Msg":["Pages.Categories.Top.Msg"],"Images_Top_Msg":["Pages.Images.Top.Msg"],"Categories_Create_Msg":["Pages.Categories.Create.Msg"],"Images_Create_Msg":["Pages.Images.Create.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Categories.Create.Msg":{"args":[],"tags":{"NoOp":[]}},"Pages.Categories.Top.Msg":{"args":[],"tags":{"NoOp":[]}},"Pages.Images.Create.Msg":{"args":[],"tags":{"GotSelectedFile":["File.File"]}},"Pages.Images.Top.Msg":{"args":[],"tags":{"NoOp":[]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"About":[],"Home":[],"NotFound":[],"Categories_Top":[],"Images_Top":[],"Categories_Create":[],"Images_Create":[]}},"File.File":{"args":[],"tags":{"File":[]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.About.Msg":{"args":[],"type":"Basics.Never"},"Pages.Home.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"About_Msg":["Pages.About.Msg"],"Home_Msg":["Pages.Home.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Categories_Top_Msg":["Pages.Categories.Top.Msg"],"Categories_Create_Msg":["Pages.Categories.Create.Msg"],"Images_Create_Msg":["Pages.Images.Create.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Categories.Create.Msg":{"args":[],"tags":{"NoOp":[]}},"Pages.Categories.Top.Msg":{"args":[],"tags":{"NoOp":[]}},"Pages.Images.Create.Msg":{"args":[],"tags":{"NoOp":[],"UserSelectedNewImageUpload":[],"UserSelectedImage":["File.File"]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"About":[],"Home":[],"NotFound":[],"Categories_Top":[],"Categories_Create":[],"Images_Create":[]}},"File.File":{"args":[],"tags":{"File":[]}}}}})}});}(this));

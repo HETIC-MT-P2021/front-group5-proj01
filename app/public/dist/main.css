@@ -18,3 +18,8 @@ body {
   text-transform: uppercase;
   text-decoration: none;
 }
+
+.preview {
+  width: 100px;
+  height: 100px;
+}
