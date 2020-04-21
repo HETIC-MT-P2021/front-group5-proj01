@@ -4,6 +4,7 @@ import Html exposing (..)
 import Page exposing (Document, Page)
 import Html.Attributes as Attr exposing (class, href, style, src)
 import Generated.Route as Route exposing (Route)
+import Models exposing (Image)
 
 
 type alias Flags =
@@ -50,26 +51,20 @@ navbar =
     ]
   ]
 
-imageView : String -> Html Msg
-imageView photoUrl = 
+imageView : Image -> Html Msg
+imageView model = 
   div [ class "galery-image-single-wrapper" ] [
     img [ class "galery-image-single"
-      , src photoUrl
+      , src model.imageUrl
       ] []
   ]
 
 galery : Html Msg
 galery = 
   div [ class "galery-content" ] [
-    imageView "https://via.placeholder.com/200"
-    , imageView "https://via.placeholder.com/200"
-    , imageView "https://via.placeholder.com/200"
-    , imageView "https://via.placeholder.com/200"
-    , imageView "https://via.placeholder.com/200"
-    , imageView "https://via.placeholder.com/100"
-    , imageView "https://via.placeholder.com/200"
-    , imageView "https://via.placeholder.com/200"
-    , imageView "https://via.placeholder.com/200"
+    imageView { id = 2, title = "Nom de l'image", description = "Une description à fournir", date = "12988120812", categoryId = 1, imageUrl = "https://via.placeholder.com/500" }
+    , imageView { id = 3, title = "Nom de l'image", description = "Une description à fournir", date = "12988120812", categoryId = 3, imageUrl = "https://via.placeholder.com/200" }
+    , imageView { id = 1, title = "Nom de l'image", description = "Une description à fournir", date = "12988120812", categoryId = 3, imageUrl = "https://via.placeholder.com/1000" }
   ]
 
 
