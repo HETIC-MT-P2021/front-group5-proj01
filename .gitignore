@@ -1,5 +1,6 @@
 .DS_Store
 elm-stuff
 node_modules
-
 src/Generated
+app/public/dist/elm.js
+elm.js
