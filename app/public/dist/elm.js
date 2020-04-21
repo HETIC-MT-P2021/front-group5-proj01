@@ -11245,11 +11245,232 @@ var $author$project$Pages$NotFound$view = {
 };
 var $author$project$Pages$NotFound$page = $author$project$Page$static(
 	{view: $author$project$Pages$NotFound$view});
+var $author$project$Pages$Top$imageView = function (photoUrl) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('galery-image-single-wrapper')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$img,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('galery-image-single'),
+						$elm$html$Html$Attributes$src(photoUrl)
+					]),
+				_List_Nil)
+			]));
+};
+var $author$project$Pages$Top$galery = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('galery-content')
+		]),
+	_List_fromArray(
+		[
+			$author$project$Pages$Top$imageView('https://via.placeholder.com/200'),
+			$author$project$Pages$Top$imageView('https://via.placeholder.com/200'),
+			$author$project$Pages$Top$imageView('https://via.placeholder.com/200'),
+			$author$project$Pages$Top$imageView('https://via.placeholder.com/200'),
+			$author$project$Pages$Top$imageView('https://via.placeholder.com/200'),
+			$author$project$Pages$Top$imageView('https://via.placeholder.com/100'),
+			$author$project$Pages$Top$imageView('https://via.placeholder.com/200'),
+			$author$project$Pages$Top$imageView('https://via.placeholder.com/200'),
+			$author$project$Pages$Top$imageView('https://via.placeholder.com/200')
+		]));
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
+var $elm$html$Html$option = _VirtualDom_node('option');
+var $elm$html$Html$select = _VirtualDom_node('select');
+var $elm$html$Html$Attributes$selected = $elm$html$Html$Attributes$boolProperty('selected');
+var $elm$core$String$append = _String_append;
+var $author$project$Generated$Route$toHref = function (route) {
+	var segments = function () {
+		switch (route.$) {
+			case 'Top':
+				return _List_Nil;
+			case 'About':
+				return _List_fromArray(
+					['about']);
+			case 'Home':
+				return _List_fromArray(
+					['home']);
+			case 'NotFound':
+				return _List_fromArray(
+					['not-found']);
+			case 'Categories_Top':
+				return _List_fromArray(
+					['categories']);
+			case 'Categories_Create':
+				return _List_fromArray(
+					['categories', 'create']);
+			default:
+				return _List_fromArray(
+					['images', 'create']);
+		}
+	}();
+	return A2(
+		$elm$core$String$append,
+		'/',
+		A2($elm$core$String$join, '/', segments));
+};
+var $author$project$Pages$Top$navbar = A2(
+	$elm$html$Html$div,
+	_List_fromArray(
+		[
+			$elm$html$Html$Attributes$class('app-sub-header')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('content-filters')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$select,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('filter-option-input')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$option,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$disabled(true),
+									$elm$html$Html$Attributes$selected(true)
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Catégories')
+								])),
+							A2(
+							$elm$html$Html$option,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Une option')
+								])),
+							A2(
+							$elm$html$Html$option,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Une deuxième option')
+								])),
+							A2(
+							$elm$html$Html$option,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Une troisième option')
+								])),
+							A2(
+							$elm$html$Html$option,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Une quatrième option')
+								]))
+						])),
+					A2(
+					$elm$html$Html$select,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('filter-option-input')
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$elm$html$Html$option,
+							_List_fromArray(
+								[
+									$elm$html$Html$Attributes$disabled(true),
+									$elm$html$Html$Attributes$selected(true)
+								]),
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Tags')
+								])),
+							A2(
+							$elm$html$Html$option,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Une option')
+								])),
+							A2(
+							$elm$html$Html$option,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Une deuxième option')
+								])),
+							A2(
+							$elm$html$Html$option,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Une troisième option')
+								])),
+							A2(
+							$elm$html$Html$option,
+							_List_Nil,
+							_List_fromArray(
+								[
+									$elm$html$Html$text('Une quatrième option')
+								]))
+						])),
+					A2(
+					$elm$html$Html$input,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('filter-option-input'),
+							$elm$html$Html$Attributes$type_('date')
+						]),
+					_List_Nil)
+				])),
+			A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('add-image-wrapper')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					$elm$html$Html$a,
+					_List_fromArray(
+						[
+							$elm$html$Html$Attributes$class('link font--h6'),
+							$elm$html$Html$Attributes$href(
+							$author$project$Generated$Route$toHref($author$project$Generated$Route$Images_Create))
+						]),
+					_List_fromArray(
+						[
+							$elm$html$Html$text('Ajouter une image')
+						]))
+				]))
+		]));
 var $author$project$Pages$Top$view = {
 	body: _List_fromArray(
-		[
-			$elm$html$Html$text('Top')
-		]),
+		[$author$project$Pages$Top$navbar, $author$project$Pages$Top$galery]),
 	title: 'Top'
 };
 var $author$project$Pages$Top$page = $author$project$Page$static(
@@ -11534,37 +11755,6 @@ var $author$project$Generated$Pages$update = F2(
 		return $elm$core$Basics$always(
 			_Utils_Tuple3(bigModel, $elm$core$Platform$Cmd$none, $elm$core$Platform$Cmd$none));
 	});
-var $elm$core$String$append = _String_append;
-var $author$project$Generated$Route$toHref = function (route) {
-	var segments = function () {
-		switch (route.$) {
-			case 'Top':
-				return _List_Nil;
-			case 'About':
-				return _List_fromArray(
-					['about']);
-			case 'Home':
-				return _List_fromArray(
-					['home']);
-			case 'NotFound':
-				return _List_fromArray(
-					['not-found']);
-			case 'Categories_Top':
-				return _List_fromArray(
-					['categories']);
-			case 'Categories_Create':
-				return _List_fromArray(
-					['categories', 'create']);
-			default:
-				return _List_fromArray(
-					['images', 'create']);
-		}
-	}();
-	return A2(
-		$elm$core$String$append,
-		'/',
-		A2($elm$core$String$join, '/', segments));
-};
 var $author$project$Global$update = F2(
 	function (msg, model) {
 		var route = msg.a;
