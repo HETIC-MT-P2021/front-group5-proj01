@@ -5,8 +5,8 @@ import Json.Decode as Decode
 import Json.Encode as Encode
 
 type alias Category =
-    { id : String
-    , name : String
+    { categoryId : Int
+    , categoryName : String
     }
 
 apiUrl = "http://127.0.0.1:8001/api/categories"
@@ -34,23 +34,23 @@ saveCategory category =
 saveCategoryRequest : Category -> Cmd CategoriesMsg
 saveCategoryRequest category =
     Http.post
-        { url = saveCategoryUrl category.id
+        { url = saveCategoryUrl category.categoryId
         , body = encode category |> Http.jsonBody
         , expect = Http.expectJson OnCategorySave categoryDecoder
         }   
 
 
-saveCategoryUrl : String -> String
+saveCategoryUrl : Int -> String
 saveCategoryUrl categoryId =
-    apiUrl ++ "/" ++ categoryId
+    apiUrl ++ "/" ++ String.fromInt categoryId
 
 -- JSON handler
 
 categoryDecoder : Decode.Decoder Category
 categoryDecoder =
     Decode.map2 Category
-        (Decode.field "id" Decode.string)
-        (Decode.field "name" Decode.string)
+        (Decode.field "categoryId" Decode.int)
+        (Decode.field "categoryName" Decode.string)
 
 categoriesDecoder : Decode.Decoder (List Category)
 categoriesDecoder =
@@ -60,8 +60,8 @@ encode : Category -> Encode.Value
 encode category =
     let
         attributes =
-            [ ( "id", Encode.string category.id )
-            , ( "name", Encode.string category.name )
+            [ ( "categoryId", Encode.int category.categoryId )
+            , ( "categoryName", Encode.string category.categoryName )
             ]
     in
     Encode.object attributes

@@ -71,7 +71,7 @@ view model =
           [ Html.text "Listes des catégories" ]
           , Html.div []
               [ Html.ul [ id "categoryUl"]
-              ( List.map (\category -> categoryLine category.name) categories)  
+              ( List.map (\category -> categoryLine category.categoryName) categories)  
               ]
               , Html.button [] 
               [ Html.text "Ajouter une catégorie"]
@@ -79,10 +79,10 @@ view model =
       }
 
 categoryLine: String -> Html.Html msg
-categoryLine name = 
+categoryLine categoryName = 
         Html.li [] 
             [ Html.p []
-                [ Html.text name ]
+                [ Html.text categoryName ]
             , Html.button []
                 [ Html.text "Supprimer"]
         ]
