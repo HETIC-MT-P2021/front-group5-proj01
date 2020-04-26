@@ -18,7 +18,6 @@ import Pages.Categories.Top
 import Pages.Images.Top
 import Pages.Categories.Create
 import Pages.Images.Create
-import Services.Categories
 
 
 
@@ -41,7 +40,7 @@ type Msg
     | About_Msg Pages.About.Msg
     | Home_Msg Pages.Home.Msg
     | NotFound_Msg Pages.NotFound.Msg
-    | Categories_Top_Msg Services.Categories.CategoriesMsg
+    | Categories_Top_Msg Pages.Categories.Top.Msg
     | Images_Top_Msg Pages.Images.Top.Msg
     | Categories_Create_Msg Pages.Categories.Create.Msg
     | Images_Create_Msg Pages.Images.Create.Msg
@@ -63,7 +62,7 @@ type alias UpgradedPages =
     , about : UpgradedPage Pages.About.Flags Pages.About.Model Pages.About.Msg
     , home : UpgradedPage Pages.Home.Flags Pages.Home.Model Pages.Home.Msg
     , notFound : UpgradedPage Pages.NotFound.Flags Pages.NotFound.Model Pages.NotFound.Msg
-    , categories_top : UpgradedPage Pages.Categories.Top.Flags Pages.Categories.Top.Model Services.Categories.CategoriesMsg
+    , categories_top : UpgradedPage Pages.Categories.Top.Flags Pages.Categories.Top.Model Pages.Categories.Top.Msg
     , images_top : UpgradedPage Pages.Images.Top.Flags Pages.Images.Top.Model Pages.Images.Top.Msg
     , categories_create : UpgradedPage Pages.Categories.Create.Flags Pages.Categories.Create.Model Pages.Categories.Create.Msg
     , images_create : UpgradedPage Pages.Images.Create.Flags Pages.Images.Create.Model Pages.Images.Create.Msg

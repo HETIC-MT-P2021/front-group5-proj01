@@ -11264,44 +11264,6 @@ var $author$project$Pages$About$view = {
 };
 var $author$project$Pages$About$page = $author$project$Page$static(
 	{view: $author$project$Pages$About$view});
-var $author$project$Pages$Categories$Create$init = {};
-var $ryannhg$elm_spa$Spa$Advanced$sandbox = function (options) {
-	return {
-		init: F2(
-			function (_v0, _v1) {
-				return _Utils_Tuple3(options.init, $elm$core$Platform$Cmd$none, $elm$core$Platform$Cmd$none);
-			}),
-		subscriptions: F2(
-			function (_v2, _v3) {
-				return $elm$core$Platform$Sub$none;
-			}),
-		update: F3(
-			function (_v4, msg, model) {
-				return _Utils_Tuple3(
-					A2(options.update, msg, model),
-					$elm$core$Platform$Cmd$none,
-					$elm$core$Platform$Cmd$none);
-			}),
-		view: $elm$core$Basics$always(options.view)
-	};
-};
-var $ryannhg$elm_spa$Spa$sandbox = $ryannhg$elm_spa$Spa$Advanced$sandbox;
-var $author$project$Page$sandbox = $ryannhg$elm_spa$Spa$sandbox;
-var $author$project$Pages$Categories$Create$update = F2(
-	function (msg, model) {
-		return {};
-	});
-var $author$project$Pages$Categories$Create$view = function (model) {
-	return {
-		body: _List_fromArray(
-			[
-				$elm$html$Html$text('Categories.Create')
-			]),
-		title: 'Categories.Create'
-	};
-};
-var $author$project$Pages$Categories$Create$page = $author$project$Page$sandbox(
-	{init: $author$project$Pages$Categories$Create$init, update: $author$project$Pages$Categories$Create$update, view: $author$project$Pages$Categories$Create$view});
 var $ryannhg$elm_spa$Spa$Advanced$element = function (page) {
 	return {
 		init: F2(
@@ -11328,9 +11290,24 @@ var $ryannhg$elm_spa$Spa$Advanced$element = function (page) {
 };
 var $ryannhg$elm_spa$Spa$element = $ryannhg$elm_spa$Spa$Advanced$element;
 var $author$project$Page$element = $ryannhg$elm_spa$Spa$element;
-var $author$project$Pages$Categories$Top$Loading = {$: 'Loading'};
-var $author$project$Services$Categories$OnFetchCategories = function (a) {
-	return {$: 'OnFetchCategories', a: a};
+var $author$project$Pages$Categories$Create$Waiting = function (a) {
+	return {$: 'Waiting', a: a};
+};
+var $author$project$Pages$Categories$Create$init = function (_v0) {
+	return _Utils_Tuple2(
+		$author$project$Pages$Categories$Create$Waiting(''),
+		$elm$core$Platform$Cmd$none);
+};
+var $author$project$Pages$Categories$Create$subscriptions = function (model) {
+	return $elm$core$Platform$Sub$none;
+};
+var $author$project$Pages$Categories$Create$Failure = {$: 'Failure'};
+var $author$project$Pages$Categories$Create$Loading = {$: 'Loading'};
+var $author$project$Pages$Categories$Create$OnCategorySave = function (a) {
+	return {$: 'OnCategorySave', a: a};
+};
+var $author$project$Pages$Categories$Create$Success = function (a) {
+	return {$: 'Success', a: a};
 };
 var $author$project$Services$Categories$apiUrl = 'http://127.0.0.1:8001/api/categories';
 var $author$project$Services$Categories$Category = F2(
@@ -11342,7 +11319,15 @@ var $author$project$Services$Categories$categoryDecoder = A3(
 	$author$project$Services$Categories$Category,
 	A2($elm$json$Json$Decode$field, 'categoryId', $elm$json$Json$Decode$int),
 	A2($elm$json$Json$Decode$field, 'categoryName', $elm$json$Json$Decode$string));
-var $author$project$Services$Categories$categoriesDecoder = $elm$json$Json$Decode$list($author$project$Services$Categories$categoryDecoder);
+var $author$project$Services$Categories$encodeCategoryName = function (categoryName) {
+	var attributes = _List_fromArray(
+		[
+			_Utils_Tuple2(
+			'categoryName',
+			$elm$json$Json$Encode$string(categoryName))
+		]);
+	return $elm$json$Json$Encode$object(attributes);
+};
 var $elm$http$Http$BadStatus_ = F2(
 	function (a, b) {
 		return {$: 'BadStatus_', a: a, b: b};
@@ -11436,7 +11421,12 @@ var $elm$http$Http$expectJson = F2(
 						A2($elm$json$Json$Decode$decodeString, decoder, string));
 				}));
 	});
-var $elm$http$Http$emptyBody = _Http_emptyBody;
+var $elm$http$Http$jsonBody = function (value) {
+	return A2(
+		_Http_pair,
+		'application/json',
+		A2($elm$json$Json$Encode$encode, 0, value));
+};
 var $elm$http$Http$Request = function (a) {
 	return {$: 'Request', a: a};
 };
@@ -11587,17 +11577,255 @@ var $elm$http$Http$request = function (r) {
 		$elm$http$Http$Request(
 			{allowCookiesFromOtherDomains: false, body: r.body, expect: r.expect, headers: r.headers, method: r.method, timeout: r.timeout, tracker: r.tracker, url: r.url}));
 };
+var $elm$http$Http$post = function (r) {
+	return $elm$http$Http$request(
+		{body: r.body, expect: r.expect, headers: _List_Nil, method: 'POST', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
+};
+var $author$project$Services$Categories$addCategoryRequest = F2(
+	function (categoryName, onSave) {
+		return $elm$http$Http$post(
+			{
+				body: $elm$http$Http$jsonBody(
+					$author$project$Services$Categories$encodeCategoryName(categoryName)),
+				expect: A2($elm$http$Http$expectJson, onSave, $author$project$Services$Categories$categoryDecoder),
+				url: $author$project$Services$Categories$apiUrl
+			});
+	});
+var $author$project$Services$Categories$addCategory = F2(
+	function (categoryName, onSave) {
+		return A2($author$project$Services$Categories$addCategoryRequest, categoryName, onSave);
+	});
+var $author$project$Pages$Categories$Create$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'SetCategoryName':
+				var newCategoryName = msg.a;
+				return _Utils_Tuple2(
+					$author$project$Pages$Categories$Create$Waiting(newCategoryName),
+					$elm$core$Platform$Cmd$none);
+			case 'SubmitForm':
+				var categoryName = msg.a;
+				return _Utils_Tuple2(
+					$author$project$Pages$Categories$Create$Loading,
+					A2($author$project$Services$Categories$addCategory, categoryName, $author$project$Pages$Categories$Create$OnCategorySave));
+			case 'OnCategorySave':
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var category = result.a;
+					return _Utils_Tuple2(
+						$author$project$Pages$Categories$Create$Success(category),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2($author$project$Pages$Categories$Create$Failure, $elm$core$Platform$Cmd$none);
+				}
+			default:
+				return _Utils_Tuple2(
+					$author$project$Pages$Categories$Create$Waiting(''),
+					$elm$core$Platform$Cmd$none);
+		}
+	});
+var $author$project$Pages$Categories$Create$ResetForm = {$: 'ResetForm'};
+var $author$project$Pages$Categories$Create$SetCategoryName = function (a) {
+	return {$: 'SetCategoryName', a: a};
+};
+var $author$project$Pages$Categories$Create$SubmitForm = function (a) {
+	return {$: 'SubmitForm', a: a};
+};
+var $elm$html$Html$form = _VirtualDom_node('form');
+var $elm$html$Html$h2 = _VirtualDom_node('h2');
+var $elm$html$Html$label = _VirtualDom_node('label');
+var $elm$html$Html$Events$alwaysPreventDefault = function (msg) {
+	return _Utils_Tuple2(msg, true);
+};
+var $elm$virtual_dom$VirtualDom$MayPreventDefault = function (a) {
+	return {$: 'MayPreventDefault', a: a};
+};
+var $elm$html$Html$Events$preventDefaultOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayPreventDefault(decoder));
+	});
+var $elm$html$Html$Events$onSubmit = function (msg) {
+	return A2(
+		$elm$html$Html$Events$preventDefaultOn,
+		'submit',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysPreventDefault,
+			$elm$json$Json$Decode$succeed(msg)));
+};
+var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
+var $elm$core$String$append = _String_append;
+var $author$project$Generated$Route$toHref = function (route) {
+	var segments = function () {
+		switch (route.$) {
+			case 'Top':
+				return _List_Nil;
+			case 'About':
+				return _List_fromArray(
+					['about']);
+			case 'Home':
+				return _List_fromArray(
+					['home']);
+			case 'NotFound':
+				return _List_fromArray(
+					['not-found']);
+			case 'Categories_Top':
+				return _List_fromArray(
+					['categories']);
+			case 'Images_Top':
+				return _List_fromArray(
+					['images']);
+			case 'Categories_Create':
+				return _List_fromArray(
+					['categories', 'create']);
+			default:
+				return _List_fromArray(
+					['images', 'create']);
+		}
+	}();
+	return A2(
+		$elm$core$String$append,
+		'/',
+		A2($elm$core$String$join, '/', segments));
+};
+var $author$project$Pages$Categories$Create$view = function (model) {
+	switch (model.$) {
+		case 'Waiting':
+			var categoryName = model.a;
+			return {
+				body: _List_fromArray(
+					[
+						A2(
+						$elm$html$Html$form,
+						_List_fromArray(
+							[
+								$elm$html$Html$Events$onSubmit(
+								$author$project$Pages$Categories$Create$SubmitForm(categoryName))
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$label,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Nom de la catégorie'),
+										A2(
+										$elm$html$Html$input,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$type_('text'),
+												$elm$html$Html$Attributes$placeholder('Nom de la catégorie'),
+												$elm$html$Html$Attributes$value(categoryName),
+												$elm$html$Html$Events$onInput($author$project$Pages$Categories$Create$SetCategoryName),
+												$elm$html$Html$Attributes$id('categoryInput')
+											]),
+										_List_Nil)
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$id('categorySubmitButton')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Submit')
+									]))
+							]))
+					]),
+				title: 'Création de catégories'
+			};
+		case 'Failure':
+			return {
+				body: _List_fromArray(
+					[
+						$elm$html$Html$text('Impossible d\'ajouter la catégorie.')
+					]),
+				title: 'Création de catégories'
+			};
+		case 'Loading':
+			return {
+				body: _List_fromArray(
+					[
+						$elm$html$Html$text('Ajout de la catégorie...')
+					]),
+				title: 'Création de catégories'
+			};
+		default:
+			var category = model.a;
+			return {
+				body: _List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h2,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('La catégorie ' + (category.categoryName + ' à été créé'))
+							])),
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('link addCategoryButtons'),
+								$elm$html$Html$Attributes$href(
+								$author$project$Generated$Route$toHref($author$project$Generated$Route$Categories_Top))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Retour à la liste des catégories')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('addCategoryButtons')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Events$onClick($author$project$Pages$Categories$Create$ResetForm)
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Ajouter un nouvelle catégorie')
+									]))
+							]))
+					]),
+				title: 'Création de catégories'
+			};
+	}
+};
+var $author$project$Pages$Categories$Create$page = $author$project$Page$element(
+	{init: $author$project$Pages$Categories$Create$init, subscriptions: $author$project$Pages$Categories$Create$subscriptions, update: $author$project$Pages$Categories$Create$update, view: $author$project$Pages$Categories$Create$view});
+var $author$project$Pages$Categories$Top$Loading = {$: 'Loading'};
+var $author$project$Pages$Categories$Top$OnFetchCategories = function (a) {
+	return {$: 'OnFetchCategories', a: a};
+};
+var $author$project$Services$Categories$categoriesDecoder = $elm$json$Json$Decode$list($author$project$Services$Categories$categoryDecoder);
+var $elm$http$Http$emptyBody = _Http_emptyBody;
 var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
 		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
-var $author$project$Services$Categories$fetchCategories = $elm$http$Http$get(
-	{
-		expect: A2($elm$http$Http$expectJson, $author$project$Services$Categories$OnFetchCategories, $author$project$Services$Categories$categoriesDecoder),
-		url: $author$project$Services$Categories$apiUrl
-	});
+var $author$project$Services$Categories$fetchCategories = function (onFetch) {
+	return $elm$http$Http$get(
+		{
+			expect: A2($elm$http$Http$expectJson, onFetch, $author$project$Services$Categories$categoriesDecoder),
+			url: $author$project$Services$Categories$apiUrl
+		});
+};
 var $author$project$Pages$Categories$Top$init = function (_v0) {
-	return _Utils_Tuple2($author$project$Pages$Categories$Top$Loading, $author$project$Services$Categories$fetchCategories);
+	return _Utils_Tuple2(
+		$author$project$Pages$Categories$Top$Loading,
+		$author$project$Services$Categories$fetchCategories($author$project$Pages$Categories$Top$OnFetchCategories));
 };
 var $author$project$Pages$Categories$Top$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$none;
@@ -11608,18 +11836,14 @@ var $author$project$Pages$Categories$Top$Success = function (a) {
 };
 var $author$project$Pages$Categories$Top$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'OnFetchCategories') {
-			var result = msg.a;
-			if (result.$ === 'Ok') {
-				var categories = result.a;
-				return _Utils_Tuple2(
-					$author$project$Pages$Categories$Top$Success(categories),
-					$elm$core$Platform$Cmd$none);
-			} else {
-				return _Utils_Tuple2($author$project$Pages$Categories$Top$Failure, $elm$core$Platform$Cmd$none);
-			}
+		var result = msg.a;
+		if (result.$ === 'Ok') {
+			var categories = result.a;
+			return _Utils_Tuple2(
+				$author$project$Pages$Categories$Top$Success(categories),
+				$elm$core$Platform$Cmd$none);
 		} else {
-			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+			return _Utils_Tuple2($author$project$Pages$Categories$Top$Failure, $elm$core$Platform$Cmd$none);
 		}
 	});
 var $author$project$Pages$Categories$Top$categoryLine = function (categoryName) {
@@ -11644,7 +11868,6 @@ var $author$project$Pages$Categories$Top$categoryLine = function (categoryName) 
 					]))
 			]));
 };
-var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $author$project$Pages$Categories$Top$view = function (model) {
 	switch (model.$) {
 		case 'Failure':
@@ -11694,8 +11917,13 @@ var $author$project$Pages$Categories$Top$view = function (model) {
 									categories))
 							])),
 						A2(
-						$elm$html$Html$button,
-						_List_Nil,
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('link'),
+								$elm$html$Html$Attributes$href(
+								$author$project$Generated$Route$toHref($author$project$Generated$Route$Categories_Create))
+							]),
 						_List_fromArray(
 							[
 								$elm$html$Html$text('Ajouter une catégorie')
@@ -11720,6 +11948,28 @@ var $author$project$Pages$Images$Create$Model = function (image) {
 	return {image: image};
 };
 var $author$project$Pages$Images$Create$init = $author$project$Pages$Images$Create$Model($elm$core$Maybe$Nothing);
+var $ryannhg$elm_spa$Spa$Advanced$sandbox = function (options) {
+	return {
+		init: F2(
+			function (_v0, _v1) {
+				return _Utils_Tuple3(options.init, $elm$core$Platform$Cmd$none, $elm$core$Platform$Cmd$none);
+			}),
+		subscriptions: F2(
+			function (_v2, _v3) {
+				return $elm$core$Platform$Sub$none;
+			}),
+		update: F3(
+			function (_v4, msg, model) {
+				return _Utils_Tuple3(
+					A2(options.update, msg, model),
+					$elm$core$Platform$Cmd$none,
+					$elm$core$Platform$Cmd$none);
+			}),
+		view: $elm$core$Basics$always(options.view)
+	};
+};
+var $ryannhg$elm_spa$Spa$sandbox = $ryannhg$elm_spa$Spa$Advanced$sandbox;
+var $author$project$Page$sandbox = $ryannhg$elm_spa$Spa$sandbox;
 var $author$project$Pages$Images$Create$update = F2(
 	function (msg, model) {
 		var file = msg.a;
@@ -12108,40 +12358,6 @@ var $author$project$Generated$Pages$update = F2(
 		return $elm$core$Basics$always(
 			_Utils_Tuple3(bigModel, $elm$core$Platform$Cmd$none, $elm$core$Platform$Cmd$none));
 	});
-var $elm$core$String$append = _String_append;
-var $author$project$Generated$Route$toHref = function (route) {
-	var segments = function () {
-		switch (route.$) {
-			case 'Top':
-				return _List_Nil;
-			case 'About':
-				return _List_fromArray(
-					['about']);
-			case 'Home':
-				return _List_fromArray(
-					['home']);
-			case 'NotFound':
-				return _List_fromArray(
-					['not-found']);
-			case 'Categories_Top':
-				return _List_fromArray(
-					['categories']);
-			case 'Images_Top':
-				return _List_fromArray(
-					['images']);
-			case 'Categories_Create':
-				return _List_fromArray(
-					['categories', 'create']);
-			default:
-				return _List_fromArray(
-					['images', 'create']);
-		}
-	}();
-	return A2(
-		$elm$core$String$append,
-		'/',
-		A2($elm$core$String$join, '/', segments));
-};
 var $author$project$Global$update = F2(
 	function (msg, model) {
 		var route = msg.a;
@@ -12374,4 +12590,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$UrlChanged, onUrlRequest: $author$project$Main$LinkClicked, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.About.Msg":{"args":[],"type":"Basics.Never"},"Pages.Home.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"},"Services.Categories.Categories":{"args":[],"type":"List.List Services.Categories.Category"},"Services.Categories.Category":{"args":[],"type":"{ categoryId : Basics.Int, categoryName : String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"About_Msg":["Pages.About.Msg"],"Home_Msg":["Pages.Home.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Categories_Top_Msg":["Services.Categories.CategoriesMsg"],"Images_Top_Msg":["Pages.Images.Top.Msg"],"Categories_Create_Msg":["Pages.Categories.Create.Msg"],"Images_Create_Msg":["Pages.Images.Create.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Services.Categories.CategoriesMsg":{"args":[],"tags":{"OnFetchCategories":["Result.Result Http.Error Services.Categories.Categories"],"OnCategorySave":["Result.Result Http.Error Services.Categories.Category"]}},"Pages.Categories.Create.Msg":{"args":[],"tags":{"NoOp":[]}},"Pages.Images.Create.Msg":{"args":[],"tags":{"GotSelectedFile":["File.File"]}},"Pages.Images.Top.Msg":{"args":[],"tags":{"NoOp":[]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"About":[],"Home":[],"NotFound":[],"Categories_Top":[],"Images_Top":[],"Categories_Create":[],"Images_Create":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"File.File":{"args":[],"tags":{"File":[]}},"List.List":{"args":["a"],"tags":{}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.About.Msg":{"args":[],"type":"Basics.Never"},"Pages.Home.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"},"Services.Categories.Categories":{"args":[],"type":"List.List Services.Categories.Category"},"Services.Categories.Category":{"args":[],"type":"{ categoryId : Basics.Int, categoryName : String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"About_Msg":["Pages.About.Msg"],"Home_Msg":["Pages.Home.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Categories_Top_Msg":["Pages.Categories.Top.Msg"],"Images_Top_Msg":["Pages.Images.Top.Msg"],"Categories_Create_Msg":["Pages.Categories.Create.Msg"],"Images_Create_Msg":["Pages.Images.Create.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Categories.Create.Msg":{"args":[],"tags":{"SubmitForm":["String.String"],"SetCategoryName":["String.String"],"OnCategorySave":["Result.Result Http.Error Services.Categories.Category"],"ResetForm":[]}},"Pages.Categories.Top.Msg":{"args":[],"tags":{"OnFetchCategories":["Result.Result Http.Error Services.Categories.Categories"]}},"Pages.Images.Create.Msg":{"args":[],"tags":{"GotSelectedFile":["File.File"]}},"Pages.Images.Top.Msg":{"args":[],"tags":{"NoOp":[]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"About":[],"Home":[],"NotFound":[],"Categories_Top":[],"Images_Top":[],"Categories_Create":[],"Images_Create":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"File.File":{"args":[],"tags":{"File":[]}},"List.List":{"args":["a"],"tags":{}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));

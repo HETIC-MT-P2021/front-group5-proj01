@@ -23,3 +23,16 @@ body {
   display: inline-block;
   width: 120px;
 }
+
+#categorySubmitButton {
+  width: 120px;
+}
+
+#categoryInput {
+  margin-left: 15px;
+}
+
+.addCategoryButtons {
+  color: var(--link--color);
+  margin: 15px;
+}
