@@ -14,7 +14,6 @@ type Route
     | Home
     | NotFound
     | Categories_Top
-    | Images_Top
     | Categories_Create
     | Images_Create
 
@@ -32,7 +31,6 @@ routes =
         , Parser.map Home (Parser.s "home")
         , Parser.map NotFound (Parser.s "not-found")
         , Parser.map Categories_Top (Parser.s "categories")
-        , Parser.map Images_Top (Parser.s "images")
         , Parser.map Categories_Create (Parser.s "categories" </> Parser.s "create")
         , Parser.map Images_Create (Parser.s "images" </> Parser.s "create")
         ]
@@ -58,9 +56,6 @@ toHref route =
                 
                 Categories_Top ->
                     [ "categories" ]
-                
-                Images_Top ->
-                    [ "images" ]
                 
                 Categories_Create ->
                     [ "categories", "create" ]
