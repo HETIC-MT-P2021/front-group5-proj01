@@ -2,4 +2,5 @@
 elm-stuff
 node_modules
 
-src/Generated
+app/src/Generated/Pages.elm
+app/src/Generated/Route.elm
