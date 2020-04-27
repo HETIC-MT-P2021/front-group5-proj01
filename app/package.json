@@ -10,7 +10,7 @@
     "build:elm": "elm make src/Main.elm --optimize --output public/dist/elm.js",
     "dev": "concurrently --raw --kill-others \"npm run dev:elm-spa\" \"npm run dev:elm\"",
     "dev:elm-spa": "chokidar src/Pages -c \"npm run build:elm-spa\"",
-    "dev:elm": "elm-live src/Main.elm -u -d public -- --debug --output public/dist/elm.js"
+    "dev:elm": "elm-live src/Main.elm --port=8001 -u -d public -- --debug --output public/dist/elm.js"
   },
   "keywords": [
     "elm",
