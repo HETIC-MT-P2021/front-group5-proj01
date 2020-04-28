@@ -24,6 +24,11 @@ body {
   width: 120px;
 }
 
+#categoryUl button {
+  color: #be2d2a;
+  cursor: pointer;
+}
+
 #categorySubmitButton {
   width: 120px;
 }
