@@ -1,13 +1,16 @@
 module Pages.Categories.Top exposing (..)
 
+import Http exposing (Error)
 import Html
 import Page exposing (Document, Page)
 import Html.Attributes exposing (class, href, style, id)
-import Services.Categories exposing(fetchCategories, CategoriesMsg(..), Category)
+import Services.Categories exposing(fetchCategories, Category, Categories)
+import Generated.Route as Route exposing (Route)
 
 type alias Flags =
     ()
 
+type Msg = OnFetchCategories (Result Http.Error Categories)
 
 type Model
   = Failure
@@ -15,7 +18,7 @@ type Model
   | Success (List Category)
 
 
-subscriptions : Model -> Sub CategoriesMsg
+subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.none
 
@@ -30,14 +33,14 @@ page =
         }
 
 
-init : () -> (Model, Cmd CategoriesMsg)
+init : () -> (Model, Cmd Msg)
 init _ =
     ( Loading
-  , fetchCategories
+  , fetchCategories OnFetchCategories
   )
 
 
-update : CategoriesMsg -> Model -> (Model, Cmd CategoriesMsg)
+update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     OnFetchCategories result ->
@@ -47,8 +50,6 @@ update msg model =
 
         Err _ ->
           (Failure, Cmd.none)
-    _ ->
-      (model, Cmd.none)
 
 
 
@@ -73,8 +74,7 @@ view model =
               [ Html.ul [ id "categoryUl"]
               ( List.map (\category -> categoryLine category.categoryName) categories)  
               ]
-              , Html.button [] 
-              [ Html.text "Ajouter une catégorie"]
+              ,Html.a [ class "link", href (Route.toHref Route.Categories_Create) ] [ Html.text "Ajouter une catégorie" ]
           ]
       }
 
