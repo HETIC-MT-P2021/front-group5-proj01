@@ -24,12 +24,14 @@ type Msg
   | OnLoading
   | OnFailure
   | SetSelectedCategoryId String
+  | SetSelectedDate String
 
 
 type alias Model = {
     images : (List Image),
     categories : (List Category),
     tags : (List Tag),
+    selectedDate : String,
     selectedCategoryId : String,
     selectedTagId : String
   }
@@ -53,6 +55,7 @@ initialState =
         }
       ]
     , tags = []
+    , selectedDate = "0"
     , selectedCategoryId = "0"
     , selectedTagId = "0"
   }
@@ -71,11 +74,6 @@ page =
         , subscriptions = subscriptions
         , view = view
         }
-
-
-applyFilters : Image -> Bool
-applyFilters image =
-  image.imageId == 1
 
 
 categoryOptionView : Category -> Html Msg
@@ -105,7 +103,7 @@ filterBar (categories, tags) =
         [ option [ Attr.disabled True, Attr.selected True ] [ text "Tags" ] ]
         ++ ( List.map (\tag -> tagOptionView tag) tags)
       )
-      , input [ class "filter-option-input", Attr.type_ "date" ] []
+      , input [ class "filter-option-input", Attr.type_ "date", Events.onInput SetSelectedDate ] []
     ]
     , div [ class "add-image-wrapper" ] [
       a [ class "link font--h6", href (Route.toHref Route.Images_Create) ] [ text "Ajouter une image" ]
@@ -122,10 +120,16 @@ imageView image =
   ]
 
 
-galery : (Images, String) -> Html Msg
-galery (images, selectedCategoryId) = 
+galery : Model -> Html Msg
+galery model = 
   div [ class "galery-content" ] ( 
-    List.map imageView (List.filter(\image -> image.imageId == Maybe.withDefault 0 (selectedCategoryId |> String.toInt)) images)
+    List.map imageView (List.filter(
+      \image -> 
+        (
+          (image.categoryId == Maybe.withDefault 0 (model.selectedCategoryId |> String.toInt)
+          && (String.contains model.selectedDate image.createdAt)
+        )
+    )) model.images)
   )
 
 
@@ -152,6 +156,8 @@ update msg model =
       (initialState, Cmd.none)
     SetSelectedCategoryId selectedCategoryId ->
       ( { model | selectedCategoryId = selectedCategoryId }, Cmd.none )
+    SetSelectedDate selectedDate ->
+      ( { model | selectedDate = selectedDate }, Cmd.none )
     OnFetchCategories result ->
       case result of
         Ok categories ->
@@ -177,7 +183,6 @@ view model =
   { title = "Top"
     , body = [ 
       filterBar (model.categories, model.tags)
-      , Html.text (model.selectedCategoryId)
-      , galery (model.images, model.selectedCategoryId)
+      , galery model
     ]
   }

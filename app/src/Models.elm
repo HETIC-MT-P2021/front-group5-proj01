@@ -23,5 +23,6 @@ type alias Image =
     , description : String
     , createdAt : String
     , fileUrl : String
+    , categoryId : Int
   }
 type alias Images = List Image

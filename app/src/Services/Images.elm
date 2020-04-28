@@ -5,7 +5,7 @@ import Json.Decode as Decode
 import Json.Encode as Encode
 import Models exposing (Image)
 
-apiUrl = "http://127.0.0.1:8000/api/images"
+apiUrl = "http://127.0.0.1:8000/api/image"
 
 type alias Images = List Image
 
@@ -34,12 +34,13 @@ addImageRequest name onSave =
 
 imageDecoder : Decode.Decoder Image
 imageDecoder =
-    Decode.map5 Image
+    Decode.map6 Image
         (Decode.field "imageId" Decode.int)
         (Decode.field "fileName" Decode.string)
         (Decode.field "description" Decode.string)
         (Decode.field "createdAt" Decode.string)
         (Decode.field "fileUrl" Decode.string)
+        (Decode.field "categoryId" Decode.int)
 
 imagesDecoder : Decode.Decoder (List Image)
 imagesDecoder =
@@ -54,6 +55,7 @@ encodeImage image =
             , ( "description", Encode.string image.description )
             , ( "createdAt", Encode.string image.createdAt )
             , ( "fileUrl", Encode.string image.fileUrl )
+            , ( "categoryId", Encode.int image.categoryId )
             ]
     in
     Encode.object attributes
