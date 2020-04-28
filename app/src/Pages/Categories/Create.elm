@@ -86,7 +86,7 @@ view model =
                         , id "categoryInput" ] []
                     ]
                 , button [ id "categorySubmitButton" ]
-                    [ text "Submit"]
+                    [ text "Ajouter"]
             ]
         ] 
         }

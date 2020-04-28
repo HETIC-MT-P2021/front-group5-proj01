@@ -11044,6 +11044,9 @@ var $elm$url$Url$Parser$parse = F2(
 	});
 var $author$project$Generated$Route$About = {$: 'About'};
 var $author$project$Generated$Route$Categories_Create = {$: 'Categories_Create'};
+var $author$project$Generated$Route$Categories_Dynamic = function (a) {
+	return {$: 'Categories_Dynamic', a: a};
+};
 var $author$project$Generated$Route$Categories_Top = {$: 'Categories_Top'};
 var $author$project$Generated$Route$Home = {$: 'Home'};
 var $author$project$Generated$Route$Images_Create = {$: 'Images_Create'};
@@ -11134,6 +11137,40 @@ var $elm$url$Url$Parser$slash = F2(
 					parseBefore(state));
 			});
 	});
+var $elm$url$Url$Parser$custom = F2(
+	function (tipe, stringToSomething) {
+		return $elm$url$Url$Parser$Parser(
+			function (_v0) {
+				var visited = _v0.visited;
+				var unvisited = _v0.unvisited;
+				var params = _v0.params;
+				var frag = _v0.frag;
+				var value = _v0.value;
+				if (!unvisited.b) {
+					return _List_Nil;
+				} else {
+					var next = unvisited.a;
+					var rest = unvisited.b;
+					var _v2 = stringToSomething(next);
+					if (_v2.$ === 'Just') {
+						var nextValue = _v2.a;
+						return _List_fromArray(
+							[
+								A5(
+								$elm$url$Url$Parser$State,
+								A2($elm$core$List$cons, next, visited),
+								rest,
+								params,
+								frag,
+								value(nextValue))
+							]);
+					} else {
+						return _List_Nil;
+					}
+				}
+			});
+	});
+var $elm$url$Url$Parser$string = A2($elm$url$Url$Parser$custom, 'STRING', $elm$core$Maybe$Just);
 var $elm$url$Url$Parser$top = $elm$url$Url$Parser$Parser(
 	function (state) {
 		return _List_fromArray(
@@ -11176,7 +11213,19 @@ var $author$project$Generated$Route$routes = $elm$url$Url$Parser$oneOf(
 			A2(
 				$elm$url$Url$Parser$slash,
 				$elm$url$Url$Parser$s('images'),
-				$elm$url$Url$Parser$s('create')))
+				$elm$url$Url$Parser$s('create'))),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Generated$Route$Categories_Dynamic,
+			A2(
+				$elm$url$Url$Parser$map,
+				function (param1) {
+					return {param1: param1};
+				},
+				A2(
+					$elm$url$Url$Parser$slash,
+					$elm$url$Url$Parser$s('categories'),
+					$elm$url$Url$Parser$string)))
 		]));
 var $author$project$Generated$Route$fromUrl = $elm$url$Url$Parser$parse($author$project$Generated$Route$routes);
 var $author$project$Main$fromUrl = A2(
@@ -11194,6 +11243,12 @@ var $author$project$Generated$Pages$Categories_Create_Model = function (a) {
 };
 var $author$project$Generated$Pages$Categories_Create_Msg = function (a) {
 	return {$: 'Categories_Create_Msg', a: a};
+};
+var $author$project$Generated$Pages$Categories_Dynamic_Model = function (a) {
+	return {$: 'Categories_Dynamic_Model', a: a};
+};
+var $author$project$Generated$Pages$Categories_Dynamic_Msg = function (a) {
+	return {$: 'Categories_Dynamic_Msg', a: a};
 };
 var $author$project$Generated$Pages$Categories_Top_Model = function (a) {
 	return {$: 'Categories_Top_Model', a: a};
@@ -11681,9 +11736,13 @@ var $author$project$Generated$Route$toHref = function (route) {
 			case 'Categories_Create':
 				return _List_fromArray(
 					['categories', 'create']);
-			default:
+			case 'Images_Create':
 				return _List_fromArray(
 					['images', 'create']);
+			default:
+				var param1 = route.a.param1;
+				return _List_fromArray(
+					['categories', param1]);
 		}
 	}();
 	return A2(
@@ -11733,7 +11792,7 @@ var $author$project$Pages$Categories$Create$view = function (model) {
 									]),
 								_List_fromArray(
 									[
-										$elm$html$Html$text('Submit')
+										$elm$html$Html$text('Ajouter')
 									]))
 							]))
 					]),
@@ -11805,16 +11864,231 @@ var $author$project$Pages$Categories$Create$view = function (model) {
 };
 var $author$project$Pages$Categories$Create$page = $author$project$Page$element(
 	{init: $author$project$Pages$Categories$Create$init, subscriptions: $author$project$Pages$Categories$Create$subscriptions, update: $author$project$Pages$Categories$Create$update, view: $author$project$Pages$Categories$Create$view});
-var $author$project$Pages$Categories$Top$Loading = {$: 'Loading'};
-var $author$project$Pages$Categories$Top$OnFetchCategories = function (a) {
-	return {$: 'OnFetchCategories', a: a};
+var $author$project$Pages$Categories$Dynamic$Loading = {$: 'Loading'};
+var $author$project$Pages$Categories$Dynamic$OnCategoryFetch = function (a) {
+	return {$: 'OnCategoryFetch', a: a};
 };
-var $author$project$Services$Categories$categoriesDecoder = $elm$json$Json$Decode$list($author$project$Services$Categories$categoryDecoder);
+var $author$project$Services$Categories$categoryByIdUrl = function (categoryId) {
+	return $author$project$Services$Categories$apiUrl + ('/' + $elm$core$String$fromInt(categoryId));
+};
 var $elm$http$Http$emptyBody = _Http_emptyBody;
 var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
 		{body: $elm$http$Http$emptyBody, expect: r.expect, headers: _List_Nil, method: 'GET', timeout: $elm$core$Maybe$Nothing, tracker: $elm$core$Maybe$Nothing, url: r.url});
 };
+var $author$project$Services$Categories$fetchCategory = F2(
+	function (categoryId, onFetch) {
+		if (categoryId.$ === 'Just') {
+			var id = categoryId.a;
+			return $elm$http$Http$get(
+				{
+					expect: A2($elm$http$Http$expectJson, onFetch, $author$project$Services$Categories$categoryDecoder),
+					url: $author$project$Services$Categories$categoryByIdUrl(id)
+				});
+		} else {
+			return $elm$core$Platform$Cmd$none;
+		}
+	});
+var $author$project$Pages$Categories$Dynamic$init = function (flags) {
+	return _Utils_Tuple2(
+		$author$project$Pages$Categories$Dynamic$Loading,
+		A2(
+			$author$project$Services$Categories$fetchCategory,
+			$elm$core$String$toInt(flags.param1),
+			$author$project$Pages$Categories$Dynamic$OnCategoryFetch));
+};
+var $author$project$Pages$Categories$Dynamic$subscriptions = function (model) {
+	return $elm$core$Platform$Sub$none;
+};
+var $author$project$Pages$Categories$Dynamic$Failure = {$: 'Failure'};
+var $author$project$Pages$Categories$Dynamic$OnCategoryUpdate = function (a) {
+	return {$: 'OnCategoryUpdate', a: a};
+};
+var $author$project$Pages$Categories$Dynamic$UpdateSuccess = function (a) {
+	return {$: 'UpdateSuccess', a: a};
+};
+var $author$project$Pages$Categories$Dynamic$Waiting = function (a) {
+	return {$: 'Waiting', a: a};
+};
+var $elm$json$Json$Encode$int = _Json_wrap;
+var $author$project$Services$Categories$encodeCategory = function (category) {
+	var attributes = _List_fromArray(
+		[
+			_Utils_Tuple2(
+			'categoryId',
+			$elm$json$Json$Encode$int(category.categoryId)),
+			_Utils_Tuple2(
+			'categoryName',
+			$elm$json$Json$Encode$string(category.categoryName))
+		]);
+	return $elm$json$Json$Encode$object(attributes);
+};
+var $author$project$Services$Categories$updateCategoryRequest = F2(
+	function (category, onUpdate) {
+		return $elm$http$Http$request(
+			{
+				body: $elm$http$Http$jsonBody(
+					$author$project$Services$Categories$encodeCategory(category)),
+				expect: A2($elm$http$Http$expectJson, onUpdate, $author$project$Services$Categories$categoryDecoder),
+				headers: _List_Nil,
+				method: 'PUT',
+				timeout: $elm$core$Maybe$Nothing,
+				tracker: $elm$core$Maybe$Nothing,
+				url: $author$project$Services$Categories$categoryByIdUrl(category.categoryId)
+			});
+	});
+var $author$project$Services$Categories$updateCategory = F2(
+	function (category, onUpdate) {
+		return A2($author$project$Services$Categories$updateCategoryRequest, category, onUpdate);
+	});
+var $author$project$Pages$Categories$Dynamic$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'SetCategoryName':
+				var categoryName = msg.a;
+				if (model.$ === 'Waiting') {
+					var category = model.a;
+					return _Utils_Tuple2(
+						$author$project$Pages$Categories$Dynamic$Waiting(
+							{categoryId: category.categoryId, categoryName: categoryName}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			case 'OnCategoryFetch':
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var category = result.a;
+					return _Utils_Tuple2(
+						$author$project$Pages$Categories$Dynamic$Waiting(category),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2($author$project$Pages$Categories$Dynamic$Failure, $elm$core$Platform$Cmd$none);
+				}
+			case 'OnCategoryUpdate':
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var category = result.a;
+					return _Utils_Tuple2(
+						$author$project$Pages$Categories$Dynamic$UpdateSuccess(category),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2($author$project$Pages$Categories$Dynamic$Failure, $elm$core$Platform$Cmd$none);
+				}
+			default:
+				if (model.$ === 'Waiting') {
+					var category = model.a;
+					return _Utils_Tuple2(
+						$author$project$Pages$Categories$Dynamic$Loading,
+						A2($author$project$Services$Categories$updateCategory, category, $author$project$Pages$Categories$Dynamic$OnCategoryUpdate));
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+		}
+	});
+var $author$project$Pages$Categories$Dynamic$SetCategoryName = function (a) {
+	return {$: 'SetCategoryName', a: a};
+};
+var $author$project$Pages$Categories$Dynamic$SubmitForm = {$: 'SubmitForm'};
+var $author$project$Pages$Categories$Dynamic$view = function (model) {
+	switch (model.$) {
+		case 'Waiting':
+			var category = model.a;
+			return {
+				body: _List_fromArray(
+					[
+						A2(
+						$elm$html$Html$form,
+						_List_fromArray(
+							[
+								$elm$html$Html$Events$onSubmit($author$project$Pages$Categories$Dynamic$SubmitForm)
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$label,
+								_List_Nil,
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Nom de la catégorie'),
+										A2(
+										$elm$html$Html$input,
+										_List_fromArray(
+											[
+												$elm$html$Html$Attributes$type_('text'),
+												$elm$html$Html$Attributes$placeholder('Nom de la catégorie'),
+												$elm$html$Html$Attributes$value(category.categoryName),
+												$elm$html$Html$Events$onInput($author$project$Pages$Categories$Dynamic$SetCategoryName),
+												$elm$html$Html$Attributes$id('categoryInput')
+											]),
+										_List_Nil)
+									])),
+								A2(
+								$elm$html$Html$button,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$id('categorySubmitButton')
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Mettre à jours')
+									]))
+							]))
+					]),
+				title: 'Modification d\'une catégorie'
+			};
+		case 'Failure':
+			return {
+				body: _List_fromArray(
+					[
+						$elm$html$Html$text('Impossible de récupérer ou mettre à jours la catégorie')
+					]),
+				title: 'Modification d\'une catégorie'
+			};
+		case 'Loading':
+			return {
+				body: _List_fromArray(
+					[
+						$elm$html$Html$text('Chargement...')
+					]),
+				title: 'Modification d\'une catégorie'
+			};
+		default:
+			var category = model.a;
+			return {
+				body: _List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h2,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('La catégorie ' + (category.categoryName + ' à été mise à jours'))
+							])),
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('link addCategoryButtons'),
+								$elm$html$Html$Attributes$href(
+								$author$project$Generated$Route$toHref($author$project$Generated$Route$Categories_Top))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Retour à la liste des catégories')
+							]))
+					]),
+				title: 'Modification d\'une catégorie'
+			};
+	}
+};
+var $author$project$Pages$Categories$Dynamic$page = $author$project$Page$element(
+	{init: $author$project$Pages$Categories$Dynamic$init, subscriptions: $author$project$Pages$Categories$Dynamic$subscriptions, update: $author$project$Pages$Categories$Dynamic$update, view: $author$project$Pages$Categories$Dynamic$view});
+var $author$project$Pages$Categories$Top$Loading = {$: 'Loading'};
+var $author$project$Pages$Categories$Top$OnFetchCategories = function (a) {
+	return {$: 'OnFetchCategories', a: a};
+};
+var $author$project$Services$Categories$categoriesDecoder = $elm$json$Json$Decode$list($author$project$Services$Categories$categoryDecoder);
 var $author$project$Services$Categories$fetchCategories = function (onFetch) {
 	return $elm$http$Http$get(
 		{
@@ -11846,7 +12120,7 @@ var $author$project$Pages$Categories$Top$update = F2(
 			return _Utils_Tuple2($author$project$Pages$Categories$Top$Failure, $elm$core$Platform$Cmd$none);
 		}
 	});
-var $author$project$Pages$Categories$Top$categoryLine = function (categoryName) {
+var $author$project$Pages$Categories$Top$categoryLine = function (category) {
 	return A2(
 		$elm$html$Html$li,
 		_List_Nil,
@@ -11857,7 +12131,7 @@ var $author$project$Pages$Categories$Top$categoryLine = function (categoryName) 
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(categoryName)
+						$elm$html$Html$text(category.categoryName)
 					])),
 				A2(
 				$elm$html$Html$button,
@@ -11865,6 +12139,22 @@ var $author$project$Pages$Categories$Top$categoryLine = function (categoryName) 
 				_List_fromArray(
 					[
 						$elm$html$Html$text('Supprimer')
+					])),
+				A2(
+				$elm$html$Html$a,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('link addCategoryButtons'),
+						$elm$html$Html$Attributes$href(
+						$author$project$Generated$Route$toHref(
+							$author$project$Generated$Route$Categories_Dynamic(
+								{
+									param1: $elm$core$String$fromInt(category.categoryId)
+								})))
+					]),
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Modifier')
 					]))
 			]));
 };
@@ -11874,7 +12164,25 @@ var $author$project$Pages$Categories$Top$view = function (model) {
 			return {
 				body: _List_fromArray(
 					[
-						$elm$html$Html$text('Impossible de charger les catégories.')
+						A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Impossible de charger les catégories.'),
+								A2(
+								$elm$html$Html$a,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('link'),
+										$elm$html$Html$Attributes$href(
+										$author$project$Generated$Route$toHref($author$project$Generated$Route$Categories_Create))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('Ajouter une catégorie')
+									]))
+							]))
 					]),
 				title: 'Categories.Top'
 			};
@@ -11912,7 +12220,7 @@ var $author$project$Pages$Categories$Top$view = function (model) {
 								A2(
 									$elm$core$List$map,
 									function (category) {
-										return $author$project$Pages$Categories$Top$categoryLine(category.categoryName);
+										return $author$project$Pages$Categories$Top$categoryLine(category);
 									},
 									categories))
 							])),
@@ -12123,6 +12431,7 @@ var $author$project$Page$upgrade = $ryannhg$elm_spa$Spa$upgrade;
 var $author$project$Generated$Pages$pages = {
 	about: A3($author$project$Page$upgrade, $author$project$Generated$Pages$About_Model, $author$project$Generated$Pages$About_Msg, $author$project$Pages$About$page),
 	categories_create: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Categories_Create_Model, $author$project$Generated$Pages$Categories_Create_Msg, $author$project$Pages$Categories$Create$page),
+	categories_dynamic: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Categories_Dynamic_Model, $author$project$Generated$Pages$Categories_Dynamic_Msg, $author$project$Pages$Categories$Dynamic$page),
 	categories_top: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Categories_Top_Model, $author$project$Generated$Pages$Categories_Top_Msg, $author$project$Pages$Categories$Top$page),
 	home: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Home_Model, $author$project$Generated$Pages$Home_Msg, $author$project$Pages$Home$page),
 	images_create: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Images_Create_Model, $author$project$Generated$Pages$Images_Create_Msg, $author$project$Pages$Images$Create$page),
@@ -12146,8 +12455,11 @@ var $author$project$Generated$Pages$init = function (route) {
 			return $author$project$Generated$Pages$pages.images_top.init(_Utils_Tuple0);
 		case 'Categories_Create':
 			return $author$project$Generated$Pages$pages.categories_create.init(_Utils_Tuple0);
-		default:
+		case 'Images_Create':
 			return $author$project$Generated$Pages$pages.images_create.init(_Utils_Tuple0);
+		default:
+			var params = route.a;
+			return $author$project$Generated$Pages$pages.categories_dynamic.init(params);
 	}
 };
 var $author$project$Global$Model = F3(
@@ -12205,9 +12517,12 @@ var $author$project$Generated$Pages$bundle = function (bigModel) {
 		case 'Categories_Create_Model':
 			var model = bigModel.a;
 			return $author$project$Generated$Pages$pages.categories_create.bundle(model);
-		default:
+		case 'Images_Create_Model':
 			var model = bigModel.a;
 			return $author$project$Generated$Pages$pages.images_create.bundle(model);
+		default:
+			var model = bigModel.a;
+			return $author$project$Generated$Pages$pages.categories_dynamic.bundle(model);
 	}
 };
 var $author$project$Generated$Pages$subscriptions = function (model) {
@@ -12286,7 +12601,7 @@ var $elm$url$Url$toString = function (url) {
 var $author$project$Generated$Pages$update = F2(
 	function (bigMsg, bigModel) {
 		var _v0 = _Utils_Tuple2(bigMsg, bigModel);
-		_v0$8:
+		_v0$9:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'Top_Msg':
@@ -12295,7 +12610,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.top.update, msg, model);
 					} else {
-						break _v0$8;
+						break _v0$9;
 					}
 				case 'About_Msg':
 					if (_v0.b.$ === 'About_Model') {
@@ -12303,7 +12618,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.about.update, msg, model);
 					} else {
-						break _v0$8;
+						break _v0$9;
 					}
 				case 'Home_Msg':
 					if (_v0.b.$ === 'Home_Model') {
@@ -12311,7 +12626,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.home.update, msg, model);
 					} else {
-						break _v0$8;
+						break _v0$9;
 					}
 				case 'NotFound_Msg':
 					if (_v0.b.$ === 'NotFound_Model') {
@@ -12319,7 +12634,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.notFound.update, msg, model);
 					} else {
-						break _v0$8;
+						break _v0$9;
 					}
 				case 'Categories_Top_Msg':
 					if (_v0.b.$ === 'Categories_Top_Model') {
@@ -12327,7 +12642,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.categories_top.update, msg, model);
 					} else {
-						break _v0$8;
+						break _v0$9;
 					}
 				case 'Images_Top_Msg':
 					if (_v0.b.$ === 'Images_Top_Model') {
@@ -12335,7 +12650,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.images_top.update, msg, model);
 					} else {
-						break _v0$8;
+						break _v0$9;
 					}
 				case 'Categories_Create_Msg':
 					if (_v0.b.$ === 'Categories_Create_Model') {
@@ -12343,15 +12658,23 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.categories_create.update, msg, model);
 					} else {
-						break _v0$8;
+						break _v0$9;
 					}
-				default:
+				case 'Images_Create_Msg':
 					if (_v0.b.$ === 'Images_Create_Model') {
 						var msg = _v0.a.a;
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.images_create.update, msg, model);
 					} else {
-						break _v0$8;
+						break _v0$9;
+					}
+				default:
+					if (_v0.b.$ === 'Categories_Dynamic_Model') {
+						var msg = _v0.a.a;
+						var model = _v0.b.a;
+						return A2($author$project$Generated$Pages$pages.categories_dynamic.update, msg, model);
+					} else {
+						break _v0$9;
 					}
 			}
 		}
@@ -12590,4 +12913,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$UrlChanged, onUrlRequest: $author$project$Main$LinkClicked, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.About.Msg":{"args":[],"type":"Basics.Never"},"Pages.Home.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"},"Services.Categories.Categories":{"args":[],"type":"List.List Services.Categories.Category"},"Services.Categories.Category":{"args":[],"type":"{ categoryId : Basics.Int, categoryName : String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"About_Msg":["Pages.About.Msg"],"Home_Msg":["Pages.Home.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Categories_Top_Msg":["Pages.Categories.Top.Msg"],"Images_Top_Msg":["Pages.Images.Top.Msg"],"Categories_Create_Msg":["Pages.Categories.Create.Msg"],"Images_Create_Msg":["Pages.Images.Create.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Categories.Create.Msg":{"args":[],"tags":{"SubmitForm":["String.String"],"SetCategoryName":["String.String"],"OnCategorySave":["Result.Result Http.Error Services.Categories.Category"],"ResetForm":[]}},"Pages.Categories.Top.Msg":{"args":[],"tags":{"OnFetchCategories":["Result.Result Http.Error Services.Categories.Categories"]}},"Pages.Images.Create.Msg":{"args":[],"tags":{"GotSelectedFile":["File.File"]}},"Pages.Images.Top.Msg":{"args":[],"tags":{"NoOp":[]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"About":[],"Home":[],"NotFound":[],"Categories_Top":[],"Images_Top":[],"Categories_Create":[],"Images_Create":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"File.File":{"args":[],"tags":{"File":[]}},"List.List":{"args":["a"],"tags":{}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.About.Msg":{"args":[],"type":"Basics.Never"},"Pages.Home.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"},"Services.Categories.Categories":{"args":[],"type":"List.List Services.Categories.Category"},"Services.Categories.Category":{"args":[],"type":"{ categoryId : Basics.Int, categoryName : String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"About_Msg":["Pages.About.Msg"],"Home_Msg":["Pages.Home.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Categories_Top_Msg":["Pages.Categories.Top.Msg"],"Images_Top_Msg":["Pages.Images.Top.Msg"],"Categories_Create_Msg":["Pages.Categories.Create.Msg"],"Images_Create_Msg":["Pages.Images.Create.Msg"],"Categories_Dynamic_Msg":["Pages.Categories.Dynamic.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Categories.Create.Msg":{"args":[],"tags":{"SubmitForm":["String.String"],"SetCategoryName":["String.String"],"OnCategorySave":["Result.Result Http.Error Services.Categories.Category"],"ResetForm":[]}},"Pages.Categories.Dynamic.Msg":{"args":[],"tags":{"SubmitForm":[],"SetCategoryName":["String.String"],"OnCategoryUpdate":["Result.Result Http.Error Services.Categories.Category"],"OnCategoryFetch":["Result.Result Http.Error Services.Categories.Category"]}},"Pages.Categories.Top.Msg":{"args":[],"tags":{"OnFetchCategories":["Result.Result Http.Error Services.Categories.Categories"]}},"Pages.Images.Create.Msg":{"args":[],"tags":{"GotSelectedFile":["File.File"]}},"Pages.Images.Top.Msg":{"args":[],"tags":{"NoOp":[]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"About":[],"Home":[],"NotFound":[],"Categories_Top":[],"Images_Top":[],"Categories_Create":[],"Images_Create":[],"Categories_Dynamic":["{ param1 : String.String }"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"File.File":{"args":[],"tags":{"File":[]}},"List.List":{"args":["a"],"tags":{}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));

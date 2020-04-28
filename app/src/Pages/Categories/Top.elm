@@ -23,7 +23,7 @@ subscriptions model =
   Sub.none
 
 
-page : Page Flags Model CategoriesMsg
+page : Page Flags Model Msg
 page =
     Page.element
         { init = init
@@ -52,13 +52,17 @@ update msg model =
           (Failure, Cmd.none)
 
 
-
-view : Model -> Document CategoriesMsg
+view : Model -> Document Msg
 view model =
   case model of
     Failure ->
       { title = "Categories.Top"
-      , body = [Html.text "Impossible de charger les catégories."]
+      , body = [ 
+        Html.div [] 
+          [ Html.text "Impossible de charger les catégories."
+          , Html.a [ class "link", href (Route.toHref Route.Categories_Create) ] [ Html.text "Ajouter une catégorie" ]
+          ]
+      ]
       }
 
     Loading ->
@@ -72,17 +76,19 @@ view model =
           [ Html.text "Listes des catégories" ]
           , Html.div []
               [ Html.ul [ id "categoryUl"]
-              ( List.map (\category -> categoryLine category.categoryName) categories)  
+              ( List.map (\category -> categoryLine category) categories)  
               ]
               ,Html.a [ class "link", href (Route.toHref Route.Categories_Create) ] [ Html.text "Ajouter une catégorie" ]
           ]
       }
 
-categoryLine: String -> Html.Html msg
-categoryLine categoryName = 
+
+categoryLine: Category -> Html.Html msg
+categoryLine category = 
         Html.li [] 
             [ Html.p []
-                [ Html.text categoryName ]
+                [ Html.text category.categoryName ]
             , Html.button []
                 [ Html.text "Supprimer"]
+            ,Html.a [ class "link addCategoryButtons", href (Route.toHref (Route.Categories_Dynamic { param1 = String.fromInt category.categoryId } )) ] [ Html.text "Modifier" ]
         ]
