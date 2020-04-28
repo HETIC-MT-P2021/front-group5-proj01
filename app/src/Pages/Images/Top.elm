@@ -1,22 +1,22 @@
-module Pages.Categories.Top exposing (..)
+module Pages.Images.Top exposing (..)
 
 import Http exposing (Error)
 import Html
 import Page exposing (Document, Page)
 import Html.Attributes exposing (class, href, style, id)
-import Models exposing (Category)
-import Services.Categories exposing(fetchCategories, Categories)
+import Models exposing (Image)
+import Services.Images exposing(fetchImages, Images)
 import Generated.Route as Route exposing (Route)
 
 type alias Flags =
     ()
 
-type Msg = OnFetchCategories (Result Http.Error Categories)
+type Msg = OnFetchImages (Result Http.Error Images)
 
 type Model
   = Failure
   | Loading
-  | Success (List Category)
+  | Success (List Image)
 
 
 subscriptions : Model -> Sub Msg
@@ -37,17 +37,17 @@ page =
 init : () -> (Model, Cmd Msg)
 init _ =
     ( Loading
-  , fetchCategories OnFetchCategories
+  , fetchImages OnFetchImages
   )
 
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    OnFetchCategories result ->
+    OnFetchImages result ->
       case result of
-        Ok categories ->
-          (Success categories, Cmd.none)
+        Ok images ->
+          (Success images, Cmd.none)
 
         Err _ ->
           (Failure, Cmd.none)
@@ -58,32 +58,32 @@ view : Model -> Document Msg
 view model =
   case model of
     Failure ->
-      { title = "Categories.Top"
-      , body = [Html.text "Impossible de charger les catégories."]
+      { title = "Images.Top"
+      , body = [Html.text "Impossible de charger les images."]
       }
 
     Loading ->
-      { title = "Categories.Top"
+      { title = "Images.Top"
       , body = [Html.text "Loading"]
       }
 
-    Success categories ->
-      { title = "Categories.Top"
+    Success images ->
+      { title = "Images.Top"
       , body = [ Html.h2 []
-          [ Html.text "Listes des catégories" ]
+          [ Html.text "Listes des images" ]
           , Html.div []
               [ Html.ul [ id "categoryUl"]
-              ( List.map (\category -> categoryLine category.categoryName) categories)  
+              ( List.map (\image -> imageBox image) images)  
               ]
-              ,Html.a [ class "link", href (Route.toHref Route.Categories_Create) ] [ Html.text "Ajouter une catégorie" ]
+              ,Html.a [ class "link", href (Route.toHref Route.Images_Create) ] [ Html.text "Ajouter une image" ]
           ]
       }
 
-categoryLine: String -> Html.Html msg
-categoryLine name = 
+imageBox: Image -> Html.Html msg
+imageBox image = 
         Html.li [] 
             [ Html.p []
-                [ Html.text name ]
+                [ Html.text image.fileName ]
             , Html.button []
                 [ Html.text "Supprimer"]
         ]

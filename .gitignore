@@ -2,4 +2,7 @@
 elm-stuff
 node_modules
 
-src/Generated
+public/dist/elm.js
+elm.js
+app/src/Generated/Pages.elm
+app/src/Generated/Route.elm
