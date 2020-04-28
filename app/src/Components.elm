@@ -24,7 +24,7 @@ navbar =
     header [ class "row center-y spacing--between app-header" ]
         [ a [ class "link font--h5", href (Route.toHref Route.Top) ] [ text "La Casa De Galeria" ]
         , div [ class "row center-y spacing--medium" ]
-            [ a [ class "link font--h6", href (Route.toHref Route.Home) ] [ text "Accueil" ]
+            [ a [ class "link font--h6", href (Route.toHref Route.Top) ] [ text "Accueil" ]
             , a [ class "link font--h6", href (Route.toHref Route.Images_Create) ] [ text "Ajouter une image" ]
             , a [ class "link font--h6", href (Route.toHref Route.Categories_Top) ] [ text "Catégories" ]
             , a [ class "link font--h6", href (Route.toHref Route.About) ] [ text "À propos" ]
