@@ -1,14 +1,16 @@
-module Models exposing (Category, Tag, TagAssoc, Image)
+module Models exposing (..)
 
 type alias Category = 
-  { id : Int
-    , name : String
+  { categoryId : Int
+    , categoryName : String
   }
+type alias Categories = List Category
 
 type alias Tag = 
-  { id : Int
-    , name : String
+  { tagId : Int
+    , tagName : String
   }
+type alias Tags = List Tag
 
 type alias TagAssoc = 
   { tagId : Int
@@ -16,10 +18,10 @@ type alias TagAssoc =
   }
 
 type alias Image = 
-  { id : Int
-    , title : String
+  { imageId : Int
+    , fileName : String
     , description : String
-    , date : String
-    , categoryId : Int
-    , imageUrl : String
+    , createdAt : String
+    , fileUrl : String
   }
+type alias Images = List Image

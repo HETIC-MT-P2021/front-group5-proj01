@@ -3,13 +3,9 @@ module Services.Categories exposing (..)
 import Http
 import Json.Decode as Decode
 import Json.Encode as Encode
+import Models exposing (Category)
 
-type alias Category =
-    { categoryId : Int
-    , categoryName : String
-    }
-
-apiUrl = "http://127.0.0.1:8001/api/categories"
+apiUrl = "http://127.0.0.1:8000/api/categories"
 
 type alias Categories = List Category
 

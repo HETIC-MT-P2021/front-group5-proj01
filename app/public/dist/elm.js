@@ -11047,6 +11047,7 @@ var $author$project$Generated$Route$Categories_Create = {$: 'Categories_Create'}
 var $author$project$Generated$Route$Categories_Top = {$: 'Categories_Top'};
 var $author$project$Generated$Route$Home = {$: 'Home'};
 var $author$project$Generated$Route$Images_Create = {$: 'Images_Create'};
+var $author$project$Generated$Route$Images_Top = {$: 'Images_Top'};
 var $author$project$Generated$Route$Top = {$: 'Top'};
 var $elm$url$Url$Parser$Parser = function (a) {
 	return {$: 'Parser', a: a};
@@ -11160,6 +11161,10 @@ var $author$project$Generated$Route$routes = $elm$url$Url$Parser$oneOf(
 			$elm$url$Url$Parser$s('categories')),
 			A2(
 			$elm$url$Url$Parser$map,
+			$author$project$Generated$Route$Images_Top,
+			$elm$url$Url$Parser$s('images')),
+			A2(
+			$elm$url$Url$Parser$map,
 			$author$project$Generated$Route$Categories_Create,
 			A2(
 				$elm$url$Url$Parser$slash,
@@ -11207,6 +11212,12 @@ var $author$project$Generated$Pages$Images_Create_Model = function (a) {
 };
 var $author$project$Generated$Pages$Images_Create_Msg = function (a) {
 	return {$: 'Images_Create_Msg', a: a};
+};
+var $author$project$Generated$Pages$Images_Top_Model = function (a) {
+	return {$: 'Images_Top_Model', a: a};
+};
+var $author$project$Generated$Pages$Images_Top_Msg = function (a) {
+	return {$: 'Images_Top_Msg', a: a};
 };
 var $author$project$Generated$Pages$NotFound_Model = function (a) {
 	return {$: 'NotFound_Model', a: a};
@@ -11298,14 +11309,14 @@ var $author$project$Pages$Categories$Create$OnCategorySave = function (a) {
 var $author$project$Pages$Categories$Create$Success = function (a) {
 	return {$: 'Success', a: a};
 };
-var $author$project$Services$Categories$apiUrl = 'http://127.0.0.1:8001/api/categories';
-var $author$project$Services$Categories$Category = F2(
+var $author$project$Services$Categories$apiUrl = 'http://127.0.0.1:8000/api/categories';
+var $author$project$Models$Category = F2(
 	function (categoryId, categoryName) {
 		return {categoryId: categoryId, categoryName: categoryName};
 	});
 var $author$project$Services$Categories$categoryDecoder = A3(
 	$elm$json$Json$Decode$map2,
-	$author$project$Services$Categories$Category,
+	$author$project$Models$Category,
 	A2($elm$json$Json$Decode$field, 'categoryId', $elm$json$Json$Decode$int),
 	A2($elm$json$Json$Decode$field, 'categoryName', $elm$json$Json$Decode$string));
 var $author$project$Services$Categories$encodeCategoryName = function (categoryName) {
@@ -11664,6 +11675,9 @@ var $author$project$Generated$Route$toHref = function (route) {
 			case 'Categories_Top':
 				return _List_fromArray(
 					['categories']);
+			case 'Images_Top':
+				return _List_fromArray(
+					['images']);
 			case 'Categories_Create':
 				return _List_fromArray(
 					['categories', 'create']);
@@ -11832,7 +11846,7 @@ var $author$project$Pages$Categories$Top$update = F2(
 			return _Utils_Tuple2($author$project$Pages$Categories$Top$Failure, $elm$core$Platform$Cmd$none);
 		}
 	});
-var $author$project$Pages$Categories$Top$categoryLine = function (categoryName) {
+var $author$project$Pages$Categories$Top$categoryLine = function (name) {
 	return A2(
 		$elm$html$Html$li,
 		_List_Nil,
@@ -11843,7 +11857,7 @@ var $author$project$Pages$Categories$Top$categoryLine = function (categoryName) 
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(categoryName)
+						$elm$html$Html$text(name)
 					])),
 				A2(
 				$elm$html$Html$button,
@@ -11999,6 +12013,144 @@ var $author$project$Pages$Images$Create$view = function (model) {
 };
 var $author$project$Pages$Images$Create$page = $author$project$Page$element(
 	{init: $author$project$Pages$Images$Create$init, subscriptions: $author$project$Pages$Images$Create$subscriptions, update: $author$project$Pages$Images$Create$update, view: $author$project$Pages$Images$Create$view});
+var $author$project$Pages$Images$Top$Loading = {$: 'Loading'};
+var $author$project$Pages$Images$Top$OnFetchImages = function (a) {
+	return {$: 'OnFetchImages', a: a};
+};
+var $author$project$Services$Images$apiUrl = 'http://127.0.0.1:8000/api/images';
+var $author$project$Models$Image = F5(
+	function (imageId, fileName, description, createdAt, fileUrl) {
+		return {createdAt: createdAt, description: description, fileName: fileName, fileUrl: fileUrl, imageId: imageId};
+	});
+var $author$project$Services$Images$imageDecoder = A6(
+	$elm$json$Json$Decode$map5,
+	$author$project$Models$Image,
+	A2($elm$json$Json$Decode$field, 'imageId', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'fileName', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'description', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'createdAt', $elm$json$Json$Decode$string),
+	A2($elm$json$Json$Decode$field, 'fileUrl', $elm$json$Json$Decode$string));
+var $author$project$Services$Images$imagesDecoder = $elm$json$Json$Decode$list($author$project$Services$Images$imageDecoder);
+var $author$project$Services$Images$fetchImages = function (onFetch) {
+	return $elm$http$Http$get(
+		{
+			expect: A2($elm$http$Http$expectJson, onFetch, $author$project$Services$Images$imagesDecoder),
+			url: $author$project$Services$Images$apiUrl
+		});
+};
+var $author$project$Pages$Images$Top$init = function (_v0) {
+	return _Utils_Tuple2(
+		$author$project$Pages$Images$Top$Loading,
+		$author$project$Services$Images$fetchImages($author$project$Pages$Images$Top$OnFetchImages));
+};
+var $author$project$Pages$Images$Top$subscriptions = function (model) {
+	return $elm$core$Platform$Sub$none;
+};
+var $author$project$Pages$Images$Top$Failure = {$: 'Failure'};
+var $author$project$Pages$Images$Top$Success = function (a) {
+	return {$: 'Success', a: a};
+};
+var $author$project$Pages$Images$Top$update = F2(
+	function (msg, model) {
+		var result = msg.a;
+		if (result.$ === 'Ok') {
+			var images = result.a;
+			return _Utils_Tuple2(
+				$author$project$Pages$Images$Top$Success(images),
+				$elm$core$Platform$Cmd$none);
+		} else {
+			return _Utils_Tuple2($author$project$Pages$Images$Top$Failure, $elm$core$Platform$Cmd$none);
+		}
+	});
+var $author$project$Pages$Images$Top$imageBox = function (image) {
+	return A2(
+		$elm$html$Html$li,
+		_List_Nil,
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text(image.fileName)
+					])),
+				A2(
+				$elm$html$Html$button,
+				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$text('Supprimer')
+					]))
+			]));
+};
+var $author$project$Pages$Images$Top$view = function (model) {
+	switch (model.$) {
+		case 'Failure':
+			return {
+				body: _List_fromArray(
+					[
+						$elm$html$Html$text('Impossible de charger les images.')
+					]),
+				title: 'Images.Top'
+			};
+		case 'Loading':
+			return {
+				body: _List_fromArray(
+					[
+						$elm$html$Html$text('Loading')
+					]),
+				title: 'Images.Top'
+			};
+		default:
+			var images = model.a;
+			return {
+				body: _List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h2,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Listes des images')
+							])),
+						A2(
+						$elm$html$Html$div,
+						_List_Nil,
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$ul,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$id('categoryUl')
+									]),
+								A2(
+									$elm$core$List$map,
+									function (image) {
+										return $author$project$Pages$Images$Top$imageBox(image);
+									},
+									images))
+							])),
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('link'),
+								$elm$html$Html$Attributes$href(
+								$author$project$Generated$Route$toHref($author$project$Generated$Route$Images_Create))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Ajouter une image')
+							]))
+					]),
+				title: 'Images.Top'
+			};
+	}
+};
+var $author$project$Pages$Images$Top$page = $author$project$Page$element(
+	{init: $author$project$Pages$Images$Top$init, subscriptions: $author$project$Pages$Images$Top$subscriptions, update: $author$project$Pages$Images$Top$update, view: $author$project$Pages$Images$Top$view});
 var $author$project$Pages$NotFound$view = {
 	body: _List_fromArray(
 		[
@@ -12008,7 +12160,274 @@ var $author$project$Pages$NotFound$view = {
 };
 var $author$project$Pages$NotFound$page = $author$project$Page$static(
 	{view: $author$project$Pages$NotFound$view});
-var $author$project$Pages$Top$imageView = function (model) {
+var $author$project$Pages$Top$OnFetchCategories = function (a) {
+	return {$: 'OnFetchCategories', a: a};
+};
+var $author$project$Pages$Top$OnFetchImages = function (a) {
+	return {$: 'OnFetchImages', a: a};
+};
+var $author$project$Pages$Top$OnFetchTags = function (a) {
+	return {$: 'OnFetchTags', a: a};
+};
+var $author$project$Services$Tags$apiUrl = 'http://127.0.0.1:8000/api/tags';
+var $author$project$Models$Tag = F2(
+	function (tagId, tagName) {
+		return {tagId: tagId, tagName: tagName};
+	});
+var $author$project$Services$Tags$tagDecoder = A3(
+	$elm$json$Json$Decode$map2,
+	$author$project$Models$Tag,
+	A2($elm$json$Json$Decode$field, 'tagId', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'tagName', $elm$json$Json$Decode$string));
+var $author$project$Services$Tags$tagsDecoder = $elm$json$Json$Decode$list($author$project$Services$Tags$tagDecoder);
+var $author$project$Services$Tags$fetchTags = function (onFetch) {
+	return $elm$http$Http$get(
+		{
+			expect: A2($elm$http$Http$expectJson, onFetch, $author$project$Services$Tags$tagsDecoder),
+			url: $author$project$Services$Tags$apiUrl
+		});
+};
+var $author$project$Pages$Top$fetchAllData = $elm$core$Platform$Cmd$batch(
+	_List_fromArray(
+		[
+			$author$project$Services$Categories$fetchCategories($author$project$Pages$Top$OnFetchCategories),
+			$author$project$Services$Images$fetchImages($author$project$Pages$Top$OnFetchImages),
+			$author$project$Services$Tags$fetchTags($author$project$Pages$Top$OnFetchTags)
+		]));
+var $author$project$Pages$Top$initialState = {
+	categories: _List_fromArray(
+		[
+			{categoryId: 1, categoryName: 'Une 1ère catégorie'},
+			{categoryId: 2, categoryName: 'Une 2ème catégorie'},
+			{categoryId: 3, categoryName: 'Une 3ème catégorie'}
+		]),
+	images: _List_Nil,
+	selectedCategoryId: '0',
+	selectedTagId: '0',
+	tags: _List_Nil
+};
+var $author$project$Pages$Top$init = function (_v0) {
+	return _Utils_Tuple2($author$project$Pages$Top$initialState, $author$project$Pages$Top$fetchAllData);
+};
+var $author$project$Pages$Top$subscriptions = function (model) {
+	return $elm$core$Platform$Sub$none;
+};
+var $author$project$Pages$Top$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'OnLoading':
+				return _Utils_Tuple2($author$project$Pages$Top$initialState, $elm$core$Platform$Cmd$none);
+			case 'OnFailure':
+				return _Utils_Tuple2($author$project$Pages$Top$initialState, $elm$core$Platform$Cmd$none);
+			case 'SetSelectedCategoryId':
+				var selectedCategoryId = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{selectedCategoryId: selectedCategoryId}),
+					$elm$core$Platform$Cmd$none);
+			case 'OnFetchCategories':
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var categories = result.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{categories: categories}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			case 'OnFetchImages':
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var images = result.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{images: images}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			default:
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var tags = result.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{tags: tags}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+		}
+	});
+var $author$project$Pages$Top$SetSelectedCategoryId = function (a) {
+	return {$: 'SetSelectedCategoryId', a: a};
+};
+var $elm$html$Html$option = _VirtualDom_node('option');
+var $author$project$Pages$Top$categoryOptionView = function (category) {
+	return A2(
+		$elm$html$Html$option,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$value(
+				$elm$core$String$fromInt(category.categoryId))
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(category.categoryName)
+			]));
+};
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
+var $elm$html$Html$Attributes$multiple = $elm$html$Html$Attributes$boolProperty('multiple');
+var $elm$html$Html$select = _VirtualDom_node('select');
+var $elm$html$Html$Attributes$selected = $elm$html$Html$Attributes$boolProperty('selected');
+var $author$project$Pages$Top$tagOptionView = function (tag) {
+	return A2(
+		$elm$html$Html$option,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$value(
+				$elm$core$String$fromInt(tag.tagId))
+			]),
+		_List_fromArray(
+			[
+				$elm$html$Html$text(tag.tagName)
+			]));
+};
+var $author$project$Pages$Top$filterBar = function (_v0) {
+	var categories = _v0.a;
+	var tags = _v0.b;
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('app-sub-header')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('content-filters')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$select,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('filter-option-input'),
+								A2(
+								$elm$html$Html$Events$on,
+								'change',
+								A2($elm$json$Json$Decode$map, $author$project$Pages$Top$SetSelectedCategoryId, $elm$html$Html$Events$targetValue))
+							]),
+						_Utils_ap(
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$option,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$disabled(true),
+											$elm$html$Html$Attributes$selected(true)
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Catégories')
+										]))
+								]),
+							A2(
+								$elm$core$List$map,
+								function (category) {
+									return $author$project$Pages$Top$categoryOptionView(category);
+								},
+								categories))),
+						A2(
+						$elm$html$Html$select,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('filter-option-input'),
+								$elm$html$Html$Attributes$multiple(false)
+							]),
+						_Utils_ap(
+							_List_fromArray(
+								[
+									A2(
+									$elm$html$Html$option,
+									_List_fromArray(
+										[
+											$elm$html$Html$Attributes$disabled(true),
+											$elm$html$Html$Attributes$selected(true)
+										]),
+									_List_fromArray(
+										[
+											$elm$html$Html$text('Tags')
+										]))
+								]),
+							A2(
+								$elm$core$List$map,
+								function (tag) {
+									return $author$project$Pages$Top$tagOptionView(tag);
+								},
+								tags))),
+						A2(
+						$elm$html$Html$input,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('filter-option-input'),
+								$elm$html$Html$Attributes$type_('date')
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('add-image-wrapper')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('link font--h6'),
+								$elm$html$Html$Attributes$href(
+								$author$project$Generated$Route$toHref($author$project$Generated$Route$Images_Create))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Ajouter une image')
+							]))
+					]))
+			]));
+};
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $author$project$Pages$Top$imageView = function (image) {
 	return A2(
 		$elm$html$Html$div,
 		_List_fromArray(
@@ -12022,188 +12441,50 @@ var $author$project$Pages$Top$imageView = function (model) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$class('galery-image-single'),
-						$elm$html$Html$Attributes$src(model.imageUrl)
+						$elm$html$Html$Attributes$src(image.fileUrl)
 					]),
 				_List_Nil)
 			]));
 };
-var $author$project$Pages$Top$galery = A2(
-	$elm$html$Html$div,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('galery-content')
-		]),
-	_List_fromArray(
-		[
-			$author$project$Pages$Top$imageView(
-			{categoryId: 1, date: '12988120812', description: 'Une description à fournir', id: 2, imageUrl: 'https://via.placeholder.com/500', title: 'Nom de l\'image'}),
-			$author$project$Pages$Top$imageView(
-			{categoryId: 3, date: '12988120812', description: 'Une description à fournir', id: 3, imageUrl: 'https://via.placeholder.com/200', title: 'Nom de l\'image'}),
-			$author$project$Pages$Top$imageView(
-			{categoryId: 3, date: '12988120812', description: 'Une description à fournir', id: 1, imageUrl: 'https://via.placeholder.com/1000', title: 'Nom de l\'image'})
-		]));
-var $elm$json$Json$Encode$bool = _Json_wrap;
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
-	});
-var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
-var $elm$html$Html$option = _VirtualDom_node('option');
-var $elm$html$Html$select = _VirtualDom_node('select');
-var $elm$html$Html$Attributes$selected = $elm$html$Html$Attributes$boolProperty('selected');
-var $author$project$Pages$Top$navbar = A2(
-	$elm$html$Html$div,
-	_List_fromArray(
-		[
-			$elm$html$Html$Attributes$class('app-sub-header')
-		]),
-	_List_fromArray(
-		[
+var $author$project$Pages$Top$galery = function (_v0) {
+	var images = _v0.a;
+	var selectedCategoryId = _v0.b;
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('galery-content')
+			]),
+		A2(
+			$elm$core$List$map,
+			$author$project$Pages$Top$imageView,
 			A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('content-filters')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$select,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('filter-option-input')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$option,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$disabled(true),
-									$elm$html$Html$Attributes$selected(true)
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Catégories')
-								])),
-							A2(
-							$elm$html$Html$option,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Une option')
-								])),
-							A2(
-							$elm$html$Html$option,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Une deuxième option')
-								])),
-							A2(
-							$elm$html$Html$option,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Une troisième option')
-								])),
-							A2(
-							$elm$html$Html$option,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Une quatrième option')
-								]))
-						])),
-					A2(
-					$elm$html$Html$select,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('filter-option-input')
-						]),
-					_List_fromArray(
-						[
-							A2(
-							$elm$html$Html$option,
-							_List_fromArray(
-								[
-									$elm$html$Html$Attributes$disabled(true),
-									$elm$html$Html$Attributes$selected(true)
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Tags')
-								])),
-							A2(
-							$elm$html$Html$option,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Une option')
-								])),
-							A2(
-							$elm$html$Html$option,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Une deuxième option')
-								])),
-							A2(
-							$elm$html$Html$option,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Une troisième option')
-								])),
-							A2(
-							$elm$html$Html$option,
-							_List_Nil,
-							_List_fromArray(
-								[
-									$elm$html$Html$text('Une quatrième option')
-								]))
-						])),
-					A2(
-					$elm$html$Html$input,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('filter-option-input'),
-							$elm$html$Html$Attributes$type_('date')
-						]),
-					_List_Nil)
-				])),
-			A2(
-			$elm$html$Html$div,
-			_List_fromArray(
-				[
-					$elm$html$Html$Attributes$class('add-image-wrapper')
-				]),
-			_List_fromArray(
-				[
-					A2(
-					$elm$html$Html$a,
-					_List_fromArray(
-						[
-							$elm$html$Html$Attributes$class('link font--h6'),
-							$elm$html$Html$Attributes$href(
-							$author$project$Generated$Route$toHref($author$project$Generated$Route$Images_Create))
-						]),
-					_List_fromArray(
-						[
-							$elm$html$Html$text('Ajouter une image')
-						]))
-				]))
-		]));
-var $author$project$Pages$Top$view = {
-	body: _List_fromArray(
-		[$author$project$Pages$Top$navbar, $author$project$Pages$Top$galery]),
-	title: 'Top'
+				$elm$core$List$filter,
+				function (image) {
+					return _Utils_eq(
+						image.imageId,
+						A2(
+							$elm$core$Maybe$withDefault,
+							0,
+							$elm$core$String$toInt(selectedCategoryId)));
+				},
+				images)));
 };
-var $author$project$Pages$Top$page = $author$project$Page$static(
-	{view: $author$project$Pages$Top$view});
+var $author$project$Pages$Top$view = function (model) {
+	return {
+		body: _List_fromArray(
+			[
+				$author$project$Pages$Top$filterBar(
+				_Utils_Tuple2(model.categories, model.tags)),
+				$elm$html$Html$text(model.selectedCategoryId),
+				$author$project$Pages$Top$galery(
+				_Utils_Tuple2(model.images, model.selectedCategoryId))
+			]),
+		title: 'Top'
+	};
+};
+var $author$project$Pages$Top$page = $author$project$Page$element(
+	{init: $author$project$Pages$Top$init, subscriptions: $author$project$Pages$Top$subscriptions, update: $author$project$Pages$Top$update, view: $author$project$Pages$Top$view});
 var $ryannhg$elm_spa$Spa$Advanced$upgrade = F4(
 	function (viewMap, toModel, toMsg, page) {
 		return {
@@ -12266,6 +12547,7 @@ var $author$project$Generated$Pages$pages = {
 	categories_top: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Categories_Top_Model, $author$project$Generated$Pages$Categories_Top_Msg, $author$project$Pages$Categories$Top$page),
 	home: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Home_Model, $author$project$Generated$Pages$Home_Msg, $author$project$Pages$Home$page),
 	images_create: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Images_Create_Model, $author$project$Generated$Pages$Images_Create_Msg, $author$project$Pages$Images$Create$page),
+	images_top: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Images_Top_Model, $author$project$Generated$Pages$Images_Top_Msg, $author$project$Pages$Images$Top$page),
 	notFound: A3($author$project$Page$upgrade, $author$project$Generated$Pages$NotFound_Model, $author$project$Generated$Pages$NotFound_Msg, $author$project$Pages$NotFound$page),
 	top: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Top_Model, $author$project$Generated$Pages$Top_Msg, $author$project$Pages$Top$page)
 };
@@ -12281,6 +12563,8 @@ var $author$project$Generated$Pages$init = function (route) {
 			return $author$project$Generated$Pages$pages.notFound.init(_Utils_Tuple0);
 		case 'Categories_Top':
 			return $author$project$Generated$Pages$pages.categories_top.init(_Utils_Tuple0);
+		case 'Images_Top':
+			return $author$project$Generated$Pages$pages.images_top.init(_Utils_Tuple0);
 		case 'Categories_Create':
 			return $author$project$Generated$Pages$pages.categories_create.init(_Utils_Tuple0);
 		default:
@@ -12336,6 +12620,9 @@ var $author$project$Generated$Pages$bundle = function (bigModel) {
 		case 'Categories_Top_Model':
 			var model = bigModel.a;
 			return $author$project$Generated$Pages$pages.categories_top.bundle(model);
+		case 'Images_Top_Model':
+			var model = bigModel.a;
+			return $author$project$Generated$Pages$pages.images_top.bundle(model);
 		case 'Categories_Create_Model':
 			var model = bigModel.a;
 			return $author$project$Generated$Pages$pages.categories_create.bundle(model);
@@ -12420,7 +12707,7 @@ var $elm$url$Url$toString = function (url) {
 var $author$project$Generated$Pages$update = F2(
 	function (bigMsg, bigModel) {
 		var _v0 = _Utils_Tuple2(bigMsg, bigModel);
-		_v0$7:
+		_v0$8:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'Top_Msg':
@@ -12429,7 +12716,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.top.update, msg, model);
 					} else {
-						break _v0$7;
+						break _v0$8;
 					}
 				case 'About_Msg':
 					if (_v0.b.$ === 'About_Model') {
@@ -12437,7 +12724,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.about.update, msg, model);
 					} else {
-						break _v0$7;
+						break _v0$8;
 					}
 				case 'Home_Msg':
 					if (_v0.b.$ === 'Home_Model') {
@@ -12445,7 +12732,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.home.update, msg, model);
 					} else {
-						break _v0$7;
+						break _v0$8;
 					}
 				case 'NotFound_Msg':
 					if (_v0.b.$ === 'NotFound_Model') {
@@ -12453,7 +12740,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.notFound.update, msg, model);
 					} else {
-						break _v0$7;
+						break _v0$8;
 					}
 				case 'Categories_Top_Msg':
 					if (_v0.b.$ === 'Categories_Top_Model') {
@@ -12461,7 +12748,15 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.categories_top.update, msg, model);
 					} else {
-						break _v0$7;
+						break _v0$8;
+					}
+				case 'Images_Top_Msg':
+					if (_v0.b.$ === 'Images_Top_Model') {
+						var msg = _v0.a.a;
+						var model = _v0.b.a;
+						return A2($author$project$Generated$Pages$pages.images_top.update, msg, model);
+					} else {
+						break _v0$8;
 					}
 				case 'Categories_Create_Msg':
 					if (_v0.b.$ === 'Categories_Create_Model') {
@@ -12469,7 +12764,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.categories_create.update, msg, model);
 					} else {
-						break _v0$7;
+						break _v0$8;
 					}
 				default:
 					if (_v0.b.$ === 'Images_Create_Model') {
@@ -12477,7 +12772,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.images_create.update, msg, model);
 					} else {
-						break _v0$7;
+						break _v0$8;
 					}
 			}
 		}
@@ -12716,4 +13011,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$UrlChanged, onUrlRequest: $author$project$Main$LinkClicked, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.About.Msg":{"args":[],"type":"Basics.Never"},"Pages.Home.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"},"Services.Categories.Categories":{"args":[],"type":"List.List Services.Categories.Category"},"Services.Categories.Category":{"args":[],"type":"{ categoryId : Basics.Int, categoryName : String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"About_Msg":["Pages.About.Msg"],"Home_Msg":["Pages.Home.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Categories_Top_Msg":["Pages.Categories.Top.Msg"],"Categories_Create_Msg":["Pages.Categories.Create.Msg"],"Images_Create_Msg":["Pages.Images.Create.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Categories.Create.Msg":{"args":[],"tags":{"SubmitForm":["String.String"],"SetCategoryName":["String.String"],"OnCategorySave":["Result.Result Http.Error Services.Categories.Category"],"ResetForm":[]}},"Pages.Categories.Top.Msg":{"args":[],"tags":{"OnFetchCategories":["Result.Result Http.Error Services.Categories.Categories"]}},"Pages.Images.Create.Msg":{"args":[],"tags":{"NoOp":[],"UserSelectedNewImageUpload":[],"UserSelectedImage":["File.File"]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"About":[],"Home":[],"NotFound":[],"Categories_Top":[],"Categories_Create":[],"Images_Create":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"File.File":{"args":[],"tags":{"File":[]}},"List.List":{"args":["a"],"tags":{}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.About.Msg":{"args":[],"type":"Basics.Never"},"Pages.Home.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Models.Categories":{"args":[],"type":"List.List Models.Category"},"Services.Categories.Categories":{"args":[],"type":"List.List Models.Category"},"Models.Category":{"args":[],"type":"{ categoryId : Basics.Int, categoryName : String.String }"},"Models.Image":{"args":[],"type":"{ imageId : Basics.Int, fileName : String.String, description : String.String, createdAt : String.String, fileUrl : String.String }"},"Models.Images":{"args":[],"type":"List.List Models.Image"},"Services.Images.Images":{"args":[],"type":"List.List Models.Image"},"Models.Tag":{"args":[],"type":"{ tagId : Basics.Int, tagName : String.String }"},"Models.Tags":{"args":[],"type":"List.List Models.Tag"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"About_Msg":["Pages.About.Msg"],"Home_Msg":["Pages.Home.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Categories_Top_Msg":["Pages.Categories.Top.Msg"],"Images_Top_Msg":["Pages.Images.Top.Msg"],"Categories_Create_Msg":["Pages.Categories.Create.Msg"],"Images_Create_Msg":["Pages.Images.Create.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Categories.Create.Msg":{"args":[],"tags":{"SubmitForm":["String.String"],"SetCategoryName":["String.String"],"OnCategorySave":["Result.Result Http.Error Models.Category"],"ResetForm":[]}},"Pages.Categories.Top.Msg":{"args":[],"tags":{"OnFetchCategories":["Result.Result Http.Error Services.Categories.Categories"]}},"Pages.Images.Create.Msg":{"args":[],"tags":{"NoOp":[],"UserSelectedNewImageUpload":[],"UserSelectedImage":["File.File"]}},"Pages.Images.Top.Msg":{"args":[],"tags":{"OnFetchImages":["Result.Result Http.Error Services.Images.Images"]}},"Pages.Top.Msg":{"args":[],"tags":{"OnFetchImages":["Result.Result Http.Error Models.Images"],"OnFetchCategories":["Result.Result Http.Error Models.Categories"],"OnFetchTags":["Result.Result Http.Error Models.Tags"],"OnLoading":[],"OnFailure":[],"SetSelectedCategoryId":["String.String"]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"About":[],"Home":[],"NotFound":[],"Categories_Top":[],"Images_Top":[],"Categories_Create":[],"Images_Create":[]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"File.File":{"args":[],"tags":{"File":[]}},"List.List":{"args":["a"],"tags":{}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));

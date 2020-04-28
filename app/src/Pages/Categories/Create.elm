@@ -6,7 +6,8 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
 import Page exposing (Document, Page)
-import Services.Categories exposing(addCategory, Category)
+import Models exposing (Category)
+import Services.Categories exposing(addCategory)
 import Generated.Route as Route exposing (Route)
 
 type alias Flags =
