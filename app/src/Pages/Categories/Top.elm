@@ -2,15 +2,18 @@ module Pages.Categories.Top exposing (..)
 
 import Http exposing (Error)
 import Html
-import Page exposing (Document, Page)
 import Html.Attributes exposing (class, href, style, id)
-import Services.Categories exposing(fetchCategories, Category, Categories)
+import Html.Events exposing (onClick)
+import Page exposing (Document, Page)
+import Services.Categories exposing(fetchCategories, deleteCategory, Category, Categories)
 import Generated.Route as Route exposing (Route)
 
 type alias Flags =
     ()
 
-type Msg = OnFetchCategories (Result Http.Error Categories)
+type Msg = OnFetchCategories (Result Http.Error Categories) 
+  | DeleteCategory Int 
+  | OnDeleteCategories (Result Http.Error Category)
 
 type Model
   = Failure
@@ -50,6 +53,11 @@ update msg model =
 
         Err _ ->
           (Failure, Cmd.none)
+    DeleteCategory categoryId ->
+      ( Loading, deleteCategory categoryId OnDeleteCategories)
+
+    OnDeleteCategories category ->
+      ( Loading, fetchCategories OnFetchCategories )
 
 
 view : Model -> Document Msg
@@ -83,12 +91,12 @@ view model =
       }
 
 
-categoryLine: Category -> Html.Html msg
+categoryLine: Category -> Html.Html Msg
 categoryLine category = 
         Html.li [] 
             [ Html.p []
                 [ Html.text category.categoryName ]
-            , Html.button []
+            , Html.button [  Html.Events.onClick ( DeleteCategory category.categoryId ) ]
                 [ Html.text "Supprimer"]
             ,Html.a [ class "link addCategoryButtons", href (Route.toHref (Route.Categories_Dynamic { param1 = String.fromInt category.categoryId } )) ] [ Html.text "Modifier" ]
         ]
