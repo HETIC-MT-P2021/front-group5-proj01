@@ -23,7 +23,7 @@ subscriptions model =
   Sub.none
 
 
-page : Page Flags Model Msg
+page : Page Flags Model CategoriesMsg
 page =
     Page.element
         { init = init
@@ -53,7 +53,7 @@ update msg model =
 
 
 
-view : Model -> Document Msg
+view : Model -> Document CategoriesMsg
 view model =
   case model of
     Failure ->
