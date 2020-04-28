@@ -24,6 +24,7 @@ type Msg
   | OnLoading
   | OnFailure
   | SetSelectedCategoryId String
+  | SetSelectedTagId String
   | SetSelectedDate String
 
 
@@ -40,21 +41,37 @@ type alias Model = {
 initialState : Model
 initialState =
   { images = []
-    , categories = [
-        {
-          categoryId = 1,
-          categoryName = "Une 1ère catégorie"
-        }
-        , {
-          categoryId = 2,
-          categoryName = "Une 2ème catégorie"
-        }
-        , {
-          categoryId = 3,
-          categoryName = "Une 3ème catégorie"
-        }
-      ]
-    , tags = []
+    , categories = []
+    , tags = [
+      {
+        tagId = 1,
+        tagName = "Un tag"
+      }
+      , {
+        tagId = 2,
+        tagName = "Un 2ème tag"
+      }
+      , {
+        tagId = 3,
+        tagName = "Un 3ème tag"
+      }
+      , {
+        tagId = 4,
+        tagName = "Un 4ème tag"
+      }
+      , {
+        tagId = 5,
+        tagName = "Un 5ème tag"
+      }
+      , {
+        tagId = 6,
+        tagName = "Un 6ème tag"
+      }
+      , {
+        tagId = 7,
+        tagName = "Un 7ème tag"
+      }
+    ]
     , selectedDate = "0"
     , selectedCategoryId = "0"
     , selectedTagId = "0"
@@ -99,7 +116,7 @@ filterBar (categories, tags) =
         [ option [ Attr.disabled True, Attr.selected True ] [ text "Catégories" ] ]
         ++ ( List.map (\category -> categoryOptionView category) categories)
       )
-      , select [ class "filter-option-input", Attr.multiple False ] (
+      , select [ class "filter-option-input", Attr.multiple False, Events.on "change" (Json.map SetSelectedTagId targetValue) ] (
         [ option [ Attr.disabled True, Attr.selected True ] [ text "Tags" ] ]
         ++ ( List.map (\tag -> tagOptionView tag) tags)
       )
@@ -125,9 +142,11 @@ galery model =
   div [ class "galery-content" ] ( 
     List.map imageView (List.filter(
       \image -> 
-        (
-          (image.categoryId == Maybe.withDefault 0 (model.selectedCategoryId |> String.toInt)
+        ((
+          image.categoryId == Maybe.withDefault 0 (model.selectedCategoryId |> String.toInt)
           && (String.contains model.selectedDate image.createdAt)
+          -- TODO: Replace @image.imageId here by image.tags.contains ...
+          && image.imageId == Maybe.withDefault 0 (model.selectedTagId |> String.toInt)
         )
     )) model.images)
   )
@@ -156,6 +175,8 @@ update msg model =
       (initialState, Cmd.none)
     SetSelectedCategoryId selectedCategoryId ->
       ( { model | selectedCategoryId = selectedCategoryId }, Cmd.none )
+    SetSelectedTagId selectedTagId ->
+      ( { model | selectedTagId = selectedTagId }, Cmd.none )
     SetSelectedDate selectedDate ->
       ( { model | selectedDate = selectedDate }, Cmd.none )
     OnFetchCategories result ->
@@ -173,7 +194,7 @@ update msg model =
     OnFetchTags result ->
       case result of
         Ok tags ->
-          ( { model | tags = tags } , Cmd.none)
+          ( model, Cmd.none)
         Err _ ->
           (model, Cmd.none)
 

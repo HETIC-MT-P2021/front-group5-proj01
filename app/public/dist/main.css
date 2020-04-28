@@ -52,6 +52,7 @@ body {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  height: 70px;
 }
 
 .filter-option-input {
@@ -105,4 +106,27 @@ body {
 .addCategoryButtons {
   color: var(--link--color);
   margin: 15px;
+}
+
+.filter-option-input-multiple:focus {
+  height: fit-content;
+  min-height: 450px;
+  align-self: flex-start;
+}
+
+.filter-option-input-multiple option[disabled] {
+  height: 10px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.filter-option-input-multiple option:not([disabled]) {
+  height: 45px;
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  margin: 5px 0;
 }
