@@ -1,4 +1,4 @@
-module Services.Categories exposing (Categories, Category, fetchCategory, fetchCategories, updateCategory, addCategory)
+module Services.Categories exposing (Categories, Category, fetchCategory, fetchCategories, updateCategory, addCategory, deleteCategory)
 
 import Http
 import Json.Decode as Decode
@@ -61,10 +61,27 @@ updateCategoryRequest category onUpdate =
         , tracker = Nothing
         }   
 
+
+deleteCategory: Int -> (Result Http.Error Category -> msg) -> Cmd msg
+deleteCategory categoryId onDelete =
+    deleteCategoryRequest categoryId onDelete
+
+deleteCategoryRequest : Int -> (Result Http.Error Category -> msg) -> Cmd msg
+deleteCategoryRequest categoryId onDelete =
+    Http.request
+       { method = "DELETE"
+        , headers = []
+        , url = categoryByIdUrl categoryId
+        , body = Encode.null |> Http.jsonBody
+        , expect = Http.expectJson onDelete categoryDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }   
+
+
 categoryByIdUrl : Int -> String
 categoryByIdUrl categoryId =
     apiUrl ++ "/" ++ String.fromInt categoryId
-
 
 
 -- JSON handler

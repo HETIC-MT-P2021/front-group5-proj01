@@ -12105,21 +12105,58 @@ var $author$project$Pages$Categories$Top$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$none;
 };
 var $author$project$Pages$Categories$Top$Failure = {$: 'Failure'};
+var $author$project$Pages$Categories$Top$OnDeleteCategories = function (a) {
+	return {$: 'OnDeleteCategories', a: a};
+};
 var $author$project$Pages$Categories$Top$Success = function (a) {
 	return {$: 'Success', a: a};
 };
+var $elm$json$Json$Encode$null = _Json_encodeNull;
+var $author$project$Services$Categories$deleteCategoryRequest = F2(
+	function (categoryId, onDelete) {
+		return $elm$http$Http$request(
+			{
+				body: $elm$http$Http$jsonBody($elm$json$Json$Encode$null),
+				expect: A2($elm$http$Http$expectJson, onDelete, $author$project$Services$Categories$categoryDecoder),
+				headers: _List_Nil,
+				method: 'DELETE',
+				timeout: $elm$core$Maybe$Nothing,
+				tracker: $elm$core$Maybe$Nothing,
+				url: $author$project$Services$Categories$categoryByIdUrl(categoryId)
+			});
+	});
+var $author$project$Services$Categories$deleteCategory = F2(
+	function (categoryId, onDelete) {
+		return A2($author$project$Services$Categories$deleteCategoryRequest, categoryId, onDelete);
+	});
 var $author$project$Pages$Categories$Top$update = F2(
 	function (msg, model) {
-		var result = msg.a;
-		if (result.$ === 'Ok') {
-			var categories = result.a;
-			return _Utils_Tuple2(
-				$author$project$Pages$Categories$Top$Success(categories),
-				$elm$core$Platform$Cmd$none);
-		} else {
-			return _Utils_Tuple2($author$project$Pages$Categories$Top$Failure, $elm$core$Platform$Cmd$none);
+		switch (msg.$) {
+			case 'OnFetchCategories':
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var categories = result.a;
+					return _Utils_Tuple2(
+						$author$project$Pages$Categories$Top$Success(categories),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2($author$project$Pages$Categories$Top$Failure, $elm$core$Platform$Cmd$none);
+				}
+			case 'DeleteCategory':
+				var categoryId = msg.a;
+				return _Utils_Tuple2(
+					$author$project$Pages$Categories$Top$Loading,
+					A2($author$project$Services$Categories$deleteCategory, categoryId, $author$project$Pages$Categories$Top$OnDeleteCategories));
+			default:
+				var category = msg.a;
+				return _Utils_Tuple2(
+					$author$project$Pages$Categories$Top$Loading,
+					$author$project$Services$Categories$fetchCategories($author$project$Pages$Categories$Top$OnFetchCategories));
 		}
 	});
+var $author$project$Pages$Categories$Top$DeleteCategory = function (a) {
+	return {$: 'DeleteCategory', a: a};
+};
 var $author$project$Pages$Categories$Top$categoryLine = function (category) {
 	return A2(
 		$elm$html$Html$li,
@@ -12135,7 +12172,11 @@ var $author$project$Pages$Categories$Top$categoryLine = function (category) {
 					])),
 				A2(
 				$elm$html$Html$button,
-				_List_Nil,
+				_List_fromArray(
+					[
+						$elm$html$Html$Events$onClick(
+						$author$project$Pages$Categories$Top$DeleteCategory(category.categoryId))
+					]),
 				_List_fromArray(
 					[
 						$elm$html$Html$text('Supprimer')
@@ -12913,4 +12954,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$UrlChanged, onUrlRequest: $author$project$Main$LinkClicked, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.About.Msg":{"args":[],"type":"Basics.Never"},"Pages.Home.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"},"Services.Categories.Categories":{"args":[],"type":"List.List Services.Categories.Category"},"Services.Categories.Category":{"args":[],"type":"{ categoryId : Basics.Int, categoryName : String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"About_Msg":["Pages.About.Msg"],"Home_Msg":["Pages.Home.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Categories_Top_Msg":["Pages.Categories.Top.Msg"],"Images_Top_Msg":["Pages.Images.Top.Msg"],"Categories_Create_Msg":["Pages.Categories.Create.Msg"],"Images_Create_Msg":["Pages.Images.Create.Msg"],"Categories_Dynamic_Msg":["Pages.Categories.Dynamic.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Categories.Create.Msg":{"args":[],"tags":{"SubmitForm":["String.String"],"SetCategoryName":["String.String"],"OnCategorySave":["Result.Result Http.Error Services.Categories.Category"],"ResetForm":[]}},"Pages.Categories.Dynamic.Msg":{"args":[],"tags":{"SubmitForm":[],"SetCategoryName":["String.String"],"OnCategoryUpdate":["Result.Result Http.Error Services.Categories.Category"],"OnCategoryFetch":["Result.Result Http.Error Services.Categories.Category"]}},"Pages.Categories.Top.Msg":{"args":[],"tags":{"OnFetchCategories":["Result.Result Http.Error Services.Categories.Categories"]}},"Pages.Images.Create.Msg":{"args":[],"tags":{"GotSelectedFile":["File.File"]}},"Pages.Images.Top.Msg":{"args":[],"tags":{"NoOp":[]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"About":[],"Home":[],"NotFound":[],"Categories_Top":[],"Images_Top":[],"Categories_Create":[],"Images_Create":[],"Categories_Dynamic":["{ param1 : String.String }"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"File.File":{"args":[],"tags":{"File":[]}},"List.List":{"args":["a"],"tags":{}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.About.Msg":{"args":[],"type":"Basics.Never"},"Pages.Home.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Pages.Top.Msg":{"args":[],"type":"Basics.Never"},"Services.Categories.Categories":{"args":[],"type":"List.List Services.Categories.Category"},"Services.Categories.Category":{"args":[],"type":"{ categoryId : Basics.Int, categoryName : String.String }"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"About_Msg":["Pages.About.Msg"],"Home_Msg":["Pages.Home.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Categories_Top_Msg":["Pages.Categories.Top.Msg"],"Images_Top_Msg":["Pages.Images.Top.Msg"],"Categories_Create_Msg":["Pages.Categories.Create.Msg"],"Images_Create_Msg":["Pages.Images.Create.Msg"],"Categories_Dynamic_Msg":["Pages.Categories.Dynamic.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Categories.Create.Msg":{"args":[],"tags":{"SubmitForm":["String.String"],"SetCategoryName":["String.String"],"OnCategorySave":["Result.Result Http.Error Services.Categories.Category"],"ResetForm":[]}},"Pages.Categories.Dynamic.Msg":{"args":[],"tags":{"SubmitForm":[],"SetCategoryName":["String.String"],"OnCategoryUpdate":["Result.Result Http.Error Services.Categories.Category"],"OnCategoryFetch":["Result.Result Http.Error Services.Categories.Category"]}},"Pages.Categories.Top.Msg":{"args":[],"tags":{"OnFetchCategories":["Result.Result Http.Error Services.Categories.Categories"],"DeleteCategory":["Basics.Int"],"OnDeleteCategories":["Result.Result Http.Error Services.Categories.Category"]}},"Pages.Images.Create.Msg":{"args":[],"tags":{"GotSelectedFile":["File.File"]}},"Pages.Images.Top.Msg":{"args":[],"tags":{"NoOp":[]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"About":[],"Home":[],"NotFound":[],"Categories_Top":[],"Images_Top":[],"Categories_Create":[],"Images_Create":[],"Categories_Dynamic":["{ param1 : String.String }"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"File.File":{"args":[],"tags":{"File":[]}},"List.List":{"args":["a"],"tags":{}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));
