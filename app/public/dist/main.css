@@ -18,3 +18,8 @@ body {
   text-transform: uppercase;
   text-decoration: none;
 }
+
+#categoryUl p {
+  display: inline-block;
+  width: 120px;
+}
