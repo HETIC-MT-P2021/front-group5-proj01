@@ -11050,6 +11050,9 @@ var $author$project$Generated$Route$Categories_Dynamic = function (a) {
 var $author$project$Generated$Route$Categories_Top = {$: 'Categories_Top'};
 var $author$project$Generated$Route$Home = {$: 'Home'};
 var $author$project$Generated$Route$Images_Create = {$: 'Images_Create'};
+var $author$project$Generated$Route$Images_Dynamic = function (a) {
+	return {$: 'Images_Dynamic', a: a};
+};
 var $author$project$Generated$Route$Images_Top = {$: 'Images_Top'};
 var $author$project$Generated$Route$Top = {$: 'Top'};
 var $elm$url$Url$Parser$Parser = function (a) {
@@ -11225,6 +11228,18 @@ var $author$project$Generated$Route$routes = $elm$url$Url$Parser$oneOf(
 				A2(
 					$elm$url$Url$Parser$slash,
 					$elm$url$Url$Parser$s('categories'),
+					$elm$url$Url$Parser$string))),
+			A2(
+			$elm$url$Url$Parser$map,
+			$author$project$Generated$Route$Images_Dynamic,
+			A2(
+				$elm$url$Url$Parser$map,
+				function (param1) {
+					return {param1: param1};
+				},
+				A2(
+					$elm$url$Url$Parser$slash,
+					$elm$url$Url$Parser$s('images'),
 					$elm$url$Url$Parser$string)))
 		]));
 var $author$project$Generated$Route$fromUrl = $elm$url$Url$Parser$parse($author$project$Generated$Route$routes);
@@ -11267,6 +11282,12 @@ var $author$project$Generated$Pages$Images_Create_Model = function (a) {
 };
 var $author$project$Generated$Pages$Images_Create_Msg = function (a) {
 	return {$: 'Images_Create_Msg', a: a};
+};
+var $author$project$Generated$Pages$Images_Dynamic_Model = function (a) {
+	return {$: 'Images_Dynamic_Model', a: a};
+};
+var $author$project$Generated$Pages$Images_Dynamic_Msg = function (a) {
+	return {$: 'Images_Dynamic_Msg', a: a};
 };
 var $author$project$Generated$Pages$Images_Top_Model = function (a) {
 	return {$: 'Images_Top_Model', a: a};
@@ -11739,10 +11760,14 @@ var $author$project$Generated$Route$toHref = function (route) {
 			case 'Images_Create':
 				return _List_fromArray(
 					['images', 'create']);
-			default:
+			case 'Categories_Dynamic':
 				var param1 = route.a.param1;
 				return _List_fromArray(
 					['categories', param1]);
+			default:
+				var param1 = route.a.param1;
+				return _List_fromArray(
+					['images', param1]);
 		}
 	}();
 	return A2(
@@ -12035,7 +12060,7 @@ var $author$project$Pages$Categories$Dynamic$view = function (model) {
 									]))
 							]))
 					]),
-				title: 'Modification d\'une catégorie'
+				title: 'Modification | ' + category.categoryName
 			};
 		case 'Failure':
 			return {
@@ -12730,6 +12755,318 @@ var $author$project$Pages$Images$Create$view = function (model) {
 };
 var $author$project$Pages$Images$Create$page = $author$project$Page$element(
 	{init: $author$project$Pages$Images$Create$init, subscriptions: $author$project$Pages$Images$Create$subscriptions, update: $author$project$Pages$Images$Create$update, view: $author$project$Pages$Images$Create$view});
+var $author$project$Pages$Images$Dynamic$Loading = {$: 'Loading'};
+var $author$project$Pages$Images$Dynamic$OnImageFetch = function (a) {
+	return {$: 'OnImageFetch', a: a};
+};
+var $author$project$Services$Images$imageByIdUrl = function (imageId) {
+	return $author$project$Services$Images$apiUrl + ('/' + $elm$core$String$fromInt(imageId));
+};
+var $author$project$Services$Images$fetchImage = F2(
+	function (imageId, onFetch) {
+		if (imageId.$ === 'Just') {
+			var id = imageId.a;
+			return $elm$http$Http$get(
+				{
+					expect: A2($elm$http$Http$expectJson, onFetch, $author$project$Services$Images$imageDecoder),
+					url: $author$project$Services$Images$imageByIdUrl(id)
+				});
+		} else {
+			return $elm$core$Platform$Cmd$none;
+		}
+	});
+var $author$project$Pages$Images$Dynamic$init = function (flags) {
+	return _Utils_Tuple2(
+		$author$project$Pages$Images$Dynamic$Loading,
+		A2(
+			$author$project$Services$Images$fetchImage,
+			$elm$core$String$toInt(flags.param1),
+			$author$project$Pages$Images$Dynamic$OnImageFetch));
+};
+var $author$project$Pages$Images$Dynamic$subscriptions = function (model) {
+	return $elm$core$Platform$Sub$none;
+};
+var $author$project$Pages$Images$Dynamic$Failure = {$: 'Failure'};
+var $author$project$Pages$Images$Dynamic$OnImageUpdate = function (a) {
+	return {$: 'OnImageUpdate', a: a};
+};
+var $author$project$Pages$Images$Dynamic$UpdateSuccess = function (a) {
+	return {$: 'UpdateSuccess', a: a};
+};
+var $author$project$Pages$Images$Dynamic$Waiting = function (a) {
+	return {$: 'Waiting', a: a};
+};
+var $author$project$Services$Images$encodeImage = function (image) {
+	var attributes = _List_fromArray(
+		[
+			_Utils_Tuple2(
+			'imageId',
+			$elm$json$Json$Encode$int(image.imageId)),
+			_Utils_Tuple2(
+			'fileName',
+			$elm$json$Json$Encode$string(image.fileName)),
+			_Utils_Tuple2(
+			'description',
+			$elm$json$Json$Encode$string(image.description)),
+			_Utils_Tuple2(
+			'createdAt',
+			$elm$json$Json$Encode$string(image.createdAt)),
+			_Utils_Tuple2(
+			'fileUrl',
+			$elm$json$Json$Encode$string(image.fileUrl)),
+			_Utils_Tuple2(
+			'categoryId',
+			$elm$json$Json$Encode$int(image.categoryId))
+		]);
+	return $elm$json$Json$Encode$object(attributes);
+};
+var $author$project$Services$Images$updateImageRequest = F2(
+	function (image, onUpdate) {
+		return $elm$http$Http$request(
+			{
+				body: $elm$http$Http$jsonBody(
+					$author$project$Services$Images$encodeImage(image)),
+				expect: A2($elm$http$Http$expectJson, onUpdate, $author$project$Services$Images$imageDecoder),
+				headers: _List_Nil,
+				method: 'PUT',
+				timeout: $elm$core$Maybe$Nothing,
+				tracker: $elm$core$Maybe$Nothing,
+				url: $author$project$Services$Images$imageByIdUrl(image.imageId)
+			});
+	});
+var $author$project$Services$Images$updateImage = F2(
+	function (image, onUpdate) {
+		return A2($author$project$Services$Images$updateImageRequest, image, onUpdate);
+	});
+var $author$project$Pages$Images$Dynamic$update = F2(
+	function (msg, model) {
+		switch (msg.$) {
+			case 'SetImageName':
+				var fileName = msg.a;
+				if (model.$ === 'Waiting') {
+					var image = model.a;
+					return _Utils_Tuple2(
+						$author$project$Pages$Images$Dynamic$Waiting(
+							{categoryId: image.categoryId, createdAt: image.createdAt, description: image.description, fileName: fileName, fileUrl: image.fileUrl, imageId: image.imageId}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+			case 'OnImageFetch':
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var image = result.a;
+					return _Utils_Tuple2(
+						$author$project$Pages$Images$Dynamic$Waiting(image),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2($author$project$Pages$Images$Dynamic$Failure, $elm$core$Platform$Cmd$none);
+				}
+			case 'OnImageUpdate':
+				var result = msg.a;
+				if (result.$ === 'Ok') {
+					var image = result.a;
+					return _Utils_Tuple2(
+						$author$project$Pages$Images$Dynamic$UpdateSuccess(image),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2($author$project$Pages$Images$Dynamic$Failure, $elm$core$Platform$Cmd$none);
+				}
+			default:
+				if (model.$ === 'Waiting') {
+					var image = model.a;
+					return _Utils_Tuple2(
+						$author$project$Pages$Images$Dynamic$Loading,
+						A2($author$project$Services$Images$updateImage, image, $author$project$Pages$Images$Dynamic$OnImageUpdate));
+				} else {
+					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				}
+		}
+	});
+var $author$project$Pages$Images$Dynamic$SubmitForm = {$: 'SubmitForm'};
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
+var $elm$html$Html$Attributes$hidden = $elm$html$Html$Attributes$boolProperty('hidden');
+var $elm$html$Html$img = _VirtualDom_node('img');
+var $elm$html$Html$Attributes$src = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'src',
+		_VirtualDom_noJavaScriptOrHtmlUri(url));
+};
+var $author$project$Pages$Images$Dynamic$imageView = function (image) {
+	return A2(
+		$elm$html$Html$div,
+		_List_fromArray(
+			[
+				$elm$html$Html$Attributes$class('details-image-container')
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$elm$html$Html$div,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('details-image-single-wrapper')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$img,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('details-image-single'),
+								$elm$html$Html$Attributes$src(image.fileUrl)
+							]),
+						_List_Nil)
+					])),
+				A2(
+				$elm$html$Html$form,
+				_List_fromArray(
+					[
+						$elm$html$Html$Attributes$class('image-form'),
+						$elm$html$Html$Events$onSubmit($author$project$Pages$Images$Dynamic$SubmitForm)
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$label,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Nom'),
+								A2(
+								$elm$html$Html$input,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$type_('text'),
+										$elm$html$Html$Attributes$placeholder('Nom de l\'image'),
+										$elm$html$Html$Attributes$value(image.fileName),
+										$elm$html$Html$Attributes$disabled(true),
+										$elm$html$Html$Attributes$class('form-control'),
+										$elm$html$Html$Attributes$id('imageNameInput')
+									]),
+								_List_Nil)
+							])),
+						A2(
+						$elm$html$Html$label,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Description'),
+								A2(
+								$elm$html$Html$textarea,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$placeholder('Description de l\'image'),
+										$elm$html$Html$Attributes$value(image.description),
+										$elm$html$Html$Attributes$disabled(true),
+										$elm$html$Html$Attributes$class('form-control'),
+										$elm$html$Html$Attributes$id('imageDescriptionInput')
+									]),
+								_List_Nil)
+							])),
+						A2(
+						$elm$html$Html$button,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$id('imageSubmitButton'),
+								$elm$html$Html$Attributes$hidden(true)
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Mettre à jour')
+							]))
+					]))
+			]));
+};
+var $author$project$Pages$Images$Dynamic$view = function (model) {
+	switch (model.$) {
+		case 'Waiting':
+			var image = model.a;
+			return {
+				body: _List_fromArray(
+					[
+						A2(
+						$elm$html$Html$div,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('app-content')
+							]),
+						_List_fromArray(
+							[
+								A2(
+								$elm$html$Html$a,
+								_List_fromArray(
+									[
+										$elm$html$Html$Attributes$class('link addImageButtons'),
+										$elm$html$Html$Attributes$href(
+										$author$project$Generated$Route$toHref($author$project$Generated$Route$Top))
+									]),
+								_List_fromArray(
+									[
+										$elm$html$Html$text('< Retour')
+									])),
+								$author$project$Pages$Images$Dynamic$imageView(image)
+							]))
+					]),
+				title: 'Détails | ' + image.fileName
+			};
+		case 'Failure':
+			return {
+				body: _List_fromArray(
+					[
+						$elm$html$Html$text('Impossible de récupérer ou mettre à jour l\'image')
+					]),
+				title: 'Détails d\'une image'
+			};
+		case 'Loading':
+			return {
+				body: _List_fromArray(
+					[
+						$elm$html$Html$text('Chargement...')
+					]),
+				title: 'Détails d\'une image'
+			};
+		default:
+			var image = model.a;
+			return {
+				body: _List_fromArray(
+					[
+						A2(
+						$elm$html$Html$h2,
+						_List_Nil,
+						_List_fromArray(
+							[
+								$elm$html$Html$text('L\'image ' + (image.fileName + ' à été mise à jour'))
+							])),
+						$author$project$Pages$Images$Dynamic$imageView(image),
+						A2(
+						$elm$html$Html$a,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('link addImageButtons'),
+								$elm$html$Html$Attributes$href(
+								$author$project$Generated$Route$toHref($author$project$Generated$Route$Top))
+							]),
+						_List_fromArray(
+							[
+								$elm$html$Html$text('Retour à la liste des images')
+							]))
+					]),
+				title: 'Modification d\'une image'
+			};
+	}
+};
+var $author$project$Pages$Images$Dynamic$page = $author$project$Page$element(
+	{init: $author$project$Pages$Images$Dynamic$init, subscriptions: $author$project$Pages$Images$Dynamic$subscriptions, update: $author$project$Pages$Images$Dynamic$update, view: $author$project$Pages$Images$Dynamic$view});
 var $author$project$Pages$Images$Top$Loading = {$: 'Loading'};
 var $author$project$Pages$Images$Top$OnFetchImages = function (a) {
 	return {$: 'OnFetchImages', a: a};
@@ -12875,14 +13212,14 @@ var $author$project$Pages$Top$OnFetchTags = function (a) {
 };
 var $author$project$Services$Tags$apiUrl = 'http://127.0.0.1:8001/api/tags';
 var $author$project$Models$Tag = F2(
-	function (tagId, tagName) {
-		return {tagId: tagId, tagName: tagName};
+	function (tagName, tagTitle) {
+		return {tagName: tagName, tagTitle: tagTitle};
 	});
 var $author$project$Services$Tags$tagDecoder = A3(
 	$elm$json$Json$Decode$map2,
 	$author$project$Models$Tag,
-	A2($elm$json$Json$Decode$field, 'tagId', $elm$json$Json$Decode$int),
-	A2($elm$json$Json$Decode$field, 'tagName', $elm$json$Json$Decode$string));
+	A2($elm$json$Json$Decode$field, 'tagName', $elm$json$Json$Decode$int),
+	A2($elm$json$Json$Decode$field, 'tagTitle', $elm$json$Json$Decode$string));
 var $author$project$Services$Tags$tagsDecoder = $elm$json$Json$Decode$list($author$project$Services$Tags$tagDecoder);
 var $author$project$Services$Tags$fetchTags = function (onFetch) {
 	return $elm$http$Http$get(
@@ -12898,36 +13235,16 @@ var $author$project$Pages$Top$fetchAllData = $elm$core$Platform$Cmd$batch(
 			$author$project$Services$Images$fetchImages($author$project$Pages$Top$OnFetchImages),
 			$author$project$Services$Tags$fetchTags($author$project$Pages$Top$OnFetchTags)
 		]));
-var $author$project$Pages$Top$initialState = {
-	categories: _List_Nil,
-	images: _List_Nil,
-	selectedCategoryId: '0',
-	selectedDate: '0',
-	selectedTagId: '0',
-	tags: _List_fromArray(
-		[
-			{tagId: 1, tagName: 'Un tag'},
-			{tagId: 2, tagName: 'Un 2ème tag'},
-			{tagId: 3, tagName: 'Un 3ème tag'},
-			{tagId: 4, tagName: 'Un 4ème tag'},
-			{tagId: 5, tagName: 'Un 5ème tag'},
-			{tagId: 6, tagName: 'Un 6ème tag'},
-			{tagId: 7, tagName: 'Un 7ème tag'}
-		])
-};
+var $author$project$Pages$Top$initialState = {categories: _List_Nil, images: _List_Nil, selectedCategoryId: '0', selectedDate: '0', selectedTag: '0', tags: _List_Nil};
 var $author$project$Pages$Top$init = function (_v0) {
 	return _Utils_Tuple2($author$project$Pages$Top$initialState, $author$project$Pages$Top$fetchAllData);
 };
-var $author$project$Pages$Top$subscriptions = function (model) {
+var $author$project$Pages$Top$subscriptions = function (_v0) {
 	return $elm$core$Platform$Sub$none;
 };
 var $author$project$Pages$Top$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
-			case 'OnLoading':
-				return _Utils_Tuple2($author$project$Pages$Top$initialState, $elm$core$Platform$Cmd$none);
-			case 'OnFailure':
-				return _Utils_Tuple2($author$project$Pages$Top$initialState, $elm$core$Platform$Cmd$none);
 			case 'SetSelectedCategoryId':
 				var selectedCategoryId = msg.a;
 				return _Utils_Tuple2(
@@ -12935,12 +13252,12 @@ var $author$project$Pages$Top$update = F2(
 						model,
 						{selectedCategoryId: selectedCategoryId}),
 					$elm$core$Platform$Cmd$none);
-			case 'SetSelectedTagId':
-				var selectedTagId = msg.a;
+			case 'SetSelectedTag':
+				var selectedTag = msg.a;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{selectedTagId: selectedTagId}),
+						{selectedTag: selectedTag}),
 					$elm$core$Platform$Cmd$none);
 			case 'SetSelectedDate':
 				var selectedDate = msg.a;
@@ -12977,7 +13294,11 @@ var $author$project$Pages$Top$update = F2(
 				var result = msg.a;
 				if (result.$ === 'Ok') {
 					var tags = result.a;
-					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{tags: tags}),
+						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
@@ -12989,8 +13310,8 @@ var $author$project$Pages$Top$SetSelectedCategoryId = function (a) {
 var $author$project$Pages$Top$SetSelectedDate = function (a) {
 	return {$: 'SetSelectedDate', a: a};
 };
-var $author$project$Pages$Top$SetSelectedTagId = function (a) {
-	return {$: 'SetSelectedTagId', a: a};
+var $author$project$Pages$Top$SetSelectedTag = function (a) {
+	return {$: 'SetSelectedTag', a: a};
 };
 var $author$project$Pages$Top$categoryOptionView = function (category) {
 	return A2(
@@ -13005,15 +13326,6 @@ var $author$project$Pages$Top$categoryOptionView = function (category) {
 				$elm$html$Html$text(category.categoryName)
 			]));
 };
-var $elm$json$Json$Encode$bool = _Json_wrap;
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
-	});
-var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$html$Html$Attributes$multiple = $elm$html$Html$Attributes$boolProperty('multiple');
 var $elm$html$Html$Attributes$selected = $elm$html$Html$Attributes$boolProperty('selected');
 var $author$project$Pages$Top$tagOptionView = function (tag) {
@@ -13022,11 +13334,11 @@ var $author$project$Pages$Top$tagOptionView = function (tag) {
 		_List_fromArray(
 			[
 				$elm$html$Html$Attributes$value(
-				$elm$core$String$fromInt(tag.tagId))
+				$elm$core$String$fromInt(tag.tagName))
 			]),
 		_List_fromArray(
 			[
-				$elm$html$Html$text(tag.tagName)
+				$elm$html$Html$text(tag.tagTitle)
 			]));
 };
 var $author$project$Pages$Top$filterBar = function (_v0) {
@@ -13088,7 +13400,7 @@ var $author$project$Pages$Top$filterBar = function (_v0) {
 								A2(
 								$elm$html$Html$Events$on,
 								'change',
-								A2($elm$json$Json$Decode$map, $author$project$Pages$Top$SetSelectedTagId, $elm$html$Html$Events$targetValue))
+								A2($elm$json$Json$Decode$map, $author$project$Pages$Top$SetSelectedTag, $elm$html$Html$Events$targetValue))
 							]),
 						_Utils_ap(
 							_List_fromArray(
@@ -13155,13 +13467,6 @@ var $elm$core$List$filter = F2(
 			_List_Nil,
 			list);
 	});
-var $elm$html$Html$img = _VirtualDom_node('img');
-var $elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		$elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
-};
 var $author$project$Pages$Top$imageView = function (image) {
 	return A2(
 		$elm$html$Html$div,
@@ -13172,13 +13477,24 @@ var $author$project$Pages$Top$imageView = function (image) {
 		_List_fromArray(
 			[
 				A2(
-				$elm$html$Html$img,
+				$elm$html$Html$a,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('galery-image-single'),
-						$elm$html$Html$Attributes$src(image.fileUrl)
+						$elm$html$Html$Attributes$class('galery-image-single-link'),
+						$elm$html$Html$Attributes$href(
+						'images/' + $elm$core$String$fromInt(image.imageId))
 					]),
-				_List_Nil)
+				_List_fromArray(
+					[
+						A2(
+						$elm$html$Html$img,
+						_List_fromArray(
+							[
+								$elm$html$Html$Attributes$class('galery-image-single'),
+								$elm$html$Html$Attributes$src(image.fileUrl)
+							]),
+						_List_Nil)
+					]))
 			]));
 };
 var $author$project$Pages$Top$galery = function (model) {
@@ -13199,12 +13515,7 @@ var $author$project$Pages$Top$galery = function (model) {
 						A2(
 							$elm$core$Maybe$withDefault,
 							0,
-							$elm$core$String$toInt(model.selectedCategoryId))) && (A2($elm$core$String$contains, model.selectedDate, image.createdAt) && _Utils_eq(
-						image.imageId,
-						A2(
-							$elm$core$Maybe$withDefault,
-							0,
-							$elm$core$String$toInt(model.selectedTagId))));
+							$elm$core$String$toInt(model.selectedCategoryId))) && A2($elm$core$String$contains, model.selectedDate, image.createdAt);
 				},
 				model.images)));
 };
@@ -13284,6 +13595,7 @@ var $author$project$Generated$Pages$pages = {
 	categories_top: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Categories_Top_Model, $author$project$Generated$Pages$Categories_Top_Msg, $author$project$Pages$Categories$Top$page),
 	home: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Home_Model, $author$project$Generated$Pages$Home_Msg, $author$project$Pages$Home$page),
 	images_create: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Images_Create_Model, $author$project$Generated$Pages$Images_Create_Msg, $author$project$Pages$Images$Create$page),
+	images_dynamic: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Images_Dynamic_Model, $author$project$Generated$Pages$Images_Dynamic_Msg, $author$project$Pages$Images$Dynamic$page),
 	images_top: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Images_Top_Model, $author$project$Generated$Pages$Images_Top_Msg, $author$project$Pages$Images$Top$page),
 	notFound: A3($author$project$Page$upgrade, $author$project$Generated$Pages$NotFound_Model, $author$project$Generated$Pages$NotFound_Msg, $author$project$Pages$NotFound$page),
 	top: A3($author$project$Page$upgrade, $author$project$Generated$Pages$Top_Model, $author$project$Generated$Pages$Top_Msg, $author$project$Pages$Top$page)
@@ -13306,9 +13618,12 @@ var $author$project$Generated$Pages$init = function (route) {
 			return $author$project$Generated$Pages$pages.categories_create.init(_Utils_Tuple0);
 		case 'Images_Create':
 			return $author$project$Generated$Pages$pages.images_create.init(_Utils_Tuple0);
-		default:
+		case 'Categories_Dynamic':
 			var params = route.a;
 			return $author$project$Generated$Pages$pages.categories_dynamic.init(params);
+		default:
+			var params = route.a;
+			return $author$project$Generated$Pages$pages.images_dynamic.init(params);
 	}
 };
 var $author$project$Global$Model = F3(
@@ -13369,9 +13684,12 @@ var $author$project$Generated$Pages$bundle = function (bigModel) {
 		case 'Images_Create_Model':
 			var model = bigModel.a;
 			return $author$project$Generated$Pages$pages.images_create.bundle(model);
-		default:
+		case 'Categories_Dynamic_Model':
 			var model = bigModel.a;
 			return $author$project$Generated$Pages$pages.categories_dynamic.bundle(model);
+		default:
+			var model = bigModel.a;
+			return $author$project$Generated$Pages$pages.images_dynamic.bundle(model);
 	}
 };
 var $author$project$Generated$Pages$subscriptions = function (model) {
@@ -13450,7 +13768,7 @@ var $elm$url$Url$toString = function (url) {
 var $author$project$Generated$Pages$update = F2(
 	function (bigMsg, bigModel) {
 		var _v0 = _Utils_Tuple2(bigMsg, bigModel);
-		_v0$9:
+		_v0$10:
 		while (true) {
 			switch (_v0.a.$) {
 				case 'Top_Msg':
@@ -13459,7 +13777,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.top.update, msg, model);
 					} else {
-						break _v0$9;
+						break _v0$10;
 					}
 				case 'About_Msg':
 					if (_v0.b.$ === 'About_Model') {
@@ -13467,7 +13785,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.about.update, msg, model);
 					} else {
-						break _v0$9;
+						break _v0$10;
 					}
 				case 'Home_Msg':
 					if (_v0.b.$ === 'Home_Model') {
@@ -13475,7 +13793,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.home.update, msg, model);
 					} else {
-						break _v0$9;
+						break _v0$10;
 					}
 				case 'NotFound_Msg':
 					if (_v0.b.$ === 'NotFound_Model') {
@@ -13483,7 +13801,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.notFound.update, msg, model);
 					} else {
-						break _v0$9;
+						break _v0$10;
 					}
 				case 'Categories_Top_Msg':
 					if (_v0.b.$ === 'Categories_Top_Model') {
@@ -13491,7 +13809,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.categories_top.update, msg, model);
 					} else {
-						break _v0$9;
+						break _v0$10;
 					}
 				case 'Images_Top_Msg':
 					if (_v0.b.$ === 'Images_Top_Model') {
@@ -13499,7 +13817,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.images_top.update, msg, model);
 					} else {
-						break _v0$9;
+						break _v0$10;
 					}
 				case 'Categories_Create_Msg':
 					if (_v0.b.$ === 'Categories_Create_Model') {
@@ -13507,7 +13825,7 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.categories_create.update, msg, model);
 					} else {
-						break _v0$9;
+						break _v0$10;
 					}
 				case 'Images_Create_Msg':
 					if (_v0.b.$ === 'Images_Create_Model') {
@@ -13515,15 +13833,23 @@ var $author$project$Generated$Pages$update = F2(
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.images_create.update, msg, model);
 					} else {
-						break _v0$9;
+						break _v0$10;
 					}
-				default:
+				case 'Categories_Dynamic_Msg':
 					if (_v0.b.$ === 'Categories_Dynamic_Model') {
 						var msg = _v0.a.a;
 						var model = _v0.b.a;
 						return A2($author$project$Generated$Pages$pages.categories_dynamic.update, msg, model);
 					} else {
-						break _v0$9;
+						break _v0$10;
+					}
+				default:
+					if (_v0.b.$ === 'Images_Dynamic_Model') {
+						var msg = _v0.a.a;
+						var model = _v0.b.a;
+						return A2($author$project$Generated$Pages$pages.images_dynamic.update, msg, model);
+					} else {
+						break _v0$10;
 					}
 			}
 		}
@@ -13762,4 +14088,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$UrlChanged, onUrlRequest: $author$project$Main$LinkClicked, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.About.Msg":{"args":[],"type":"Basics.Never"},"Pages.Home.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Models.Categories":{"args":[],"type":"List.List Models.Category"},"Models.Category":{"args":[],"type":"{ categoryId : Basics.Int, categoryName : String.String }"},"Models.Image":{"args":[],"type":"{ imageId : Basics.Int, fileName : String.String, description : String.String, createdAt : String.String, fileUrl : String.String, categoryId : Basics.Int }"},"Services.Images.ImageUrl":{"args":[],"type":"{ fileUrl : String.String }"},"Models.Images":{"args":[],"type":"List.List Models.Image"},"Models.Tag":{"args":[],"type":"{ tagId : Basics.Int, tagName : String.String }"},"Models.Tags":{"args":[],"type":"List.List Models.Tag"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"About_Msg":["Pages.About.Msg"],"Home_Msg":["Pages.Home.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Categories_Top_Msg":["Pages.Categories.Top.Msg"],"Images_Top_Msg":["Pages.Images.Top.Msg"],"Categories_Create_Msg":["Pages.Categories.Create.Msg"],"Images_Create_Msg":["Pages.Images.Create.Msg"],"Categories_Dynamic_Msg":["Pages.Categories.Dynamic.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Categories.Create.Msg":{"args":[],"tags":{"SubmitForm":["String.String"],"SetCategoryName":["String.String"],"OnCategorySave":["Result.Result Http.Error Models.Category"],"ResetForm":[]}},"Pages.Categories.Dynamic.Msg":{"args":[],"tags":{"SubmitForm":[],"SetCategoryName":["String.String"],"OnCategoryUpdate":["Result.Result Http.Error Models.Category"],"OnCategoryFetch":["Result.Result Http.Error Models.Category"]}},"Pages.Categories.Top.Msg":{"args":[],"tags":{"OnFetchCategories":["Result.Result Http.Error Models.Categories"],"DeleteCategory":["Basics.Int"],"OnDeleteCategories":["Result.Result Http.Error String.String"]}},"Pages.Images.Create.Msg":{"args":[],"tags":{"ImageRequested":[],"ImageLoaded":["File.File"],"OnFetchCategories":["Result.Result Http.Error Models.Categories"],"SetImageDescription":["String.String"],"SetSelectedCategory":["String.String"],"SetSelectedTag":["String.String"],"SubmitForm":[],"OnUploadFile":["Result.Result Http.Error Services.Images.ImageUrl"],"OnPostImage":["Result.Result Http.Error Models.Image"]}},"Pages.Images.Top.Msg":{"args":[],"tags":{"OnFetchImages":["Result.Result Http.Error Models.Images"]}},"Pages.Top.Msg":{"args":[],"tags":{"OnFetchImages":["Result.Result Http.Error Models.Images"],"OnFetchCategories":["Result.Result Http.Error Models.Categories"],"OnFetchTags":["Result.Result Http.Error Models.Tags"],"OnLoading":[],"OnFailure":[],"SetSelectedCategoryId":["String.String"],"SetSelectedTagId":["String.String"],"SetSelectedDate":["String.String"]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"About":[],"Home":[],"NotFound":[],"Categories_Top":[],"Images_Top":[],"Categories_Create":[],"Images_Create":[],"Categories_Dynamic":["{ param1 : String.String }"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"File.File":{"args":[],"tags":{"File":[]}},"List.List":{"args":["a"],"tags":{}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.About.Msg":{"args":[],"type":"Basics.Never"},"Pages.Home.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Models.Categories":{"args":[],"type":"List.List Models.Category"},"Models.Category":{"args":[],"type":"{ categoryId : Basics.Int, categoryName : String.String }"},"Models.Image":{"args":[],"type":"{ imageId : Basics.Int, fileName : String.String, description : String.String, createdAt : String.String, fileUrl : String.String, categoryId : Basics.Int }"},"Services.Images.ImageUrl":{"args":[],"type":"{ fileUrl : String.String }"},"Models.Images":{"args":[],"type":"List.List Models.Image"},"Models.Tag":{"args":[],"type":"{ tagName : Basics.Int, tagTitle : String.String }"},"Models.Tags":{"args":[],"type":"List.List Models.Tag"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"About_Msg":["Pages.About.Msg"],"Home_Msg":["Pages.Home.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Categories_Top_Msg":["Pages.Categories.Top.Msg"],"Images_Top_Msg":["Pages.Images.Top.Msg"],"Categories_Create_Msg":["Pages.Categories.Create.Msg"],"Images_Create_Msg":["Pages.Images.Create.Msg"],"Categories_Dynamic_Msg":["Pages.Categories.Dynamic.Msg"],"Images_Dynamic_Msg":["Pages.Images.Dynamic.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Categories.Create.Msg":{"args":[],"tags":{"SubmitForm":["String.String"],"SetCategoryName":["String.String"],"OnCategorySave":["Result.Result Http.Error Models.Category"],"ResetForm":[]}},"Pages.Categories.Dynamic.Msg":{"args":[],"tags":{"SubmitForm":[],"SetCategoryName":["String.String"],"OnCategoryUpdate":["Result.Result Http.Error Models.Category"],"OnCategoryFetch":["Result.Result Http.Error Models.Category"]}},"Pages.Categories.Top.Msg":{"args":[],"tags":{"OnFetchCategories":["Result.Result Http.Error Models.Categories"],"DeleteCategory":["Basics.Int"],"OnDeleteCategories":["Result.Result Http.Error String.String"]}},"Pages.Images.Create.Msg":{"args":[],"tags":{"ImageRequested":[],"ImageLoaded":["File.File"],"OnFetchCategories":["Result.Result Http.Error Models.Categories"],"SetImageDescription":["String.String"],"SetSelectedCategory":["String.String"],"SetSelectedTag":["String.String"],"SubmitForm":[],"OnUploadFile":["Result.Result Http.Error Services.Images.ImageUrl"],"OnPostImage":["Result.Result Http.Error Models.Image"]}},"Pages.Images.Dynamic.Msg":{"args":[],"tags":{"SubmitForm":[],"SetImageName":["String.String"],"OnImageUpdate":["Result.Result Http.Error Models.Image"],"OnImageFetch":["Result.Result Http.Error Models.Image"]}},"Pages.Images.Top.Msg":{"args":[],"tags":{"OnFetchImages":["Result.Result Http.Error Models.Images"]}},"Pages.Top.Msg":{"args":[],"tags":{"OnFetchImages":["Result.Result Http.Error Models.Images"],"OnFetchCategories":["Result.Result Http.Error Models.Categories"],"OnFetchTags":["Result.Result Http.Error Models.Tags"],"SetSelectedCategoryId":["String.String"],"SetSelectedTag":["String.String"],"SetSelectedDate":["String.String"]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"About":[],"Home":[],"NotFound":[],"Categories_Top":[],"Images_Top":[],"Categories_Create":[],"Images_Create":[],"Categories_Dynamic":["{ param1 : String.String }"],"Images_Dynamic":["{ param1 : String.String }"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"File.File":{"args":[],"tags":{"File":[]}},"List.List":{"args":["a"],"tags":{}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));

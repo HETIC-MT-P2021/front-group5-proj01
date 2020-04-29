@@ -21,10 +21,8 @@ type Msg
   = OnFetchImages (Result Http.Error Images)
   | OnFetchCategories (Result Http.Error Categories)
   | OnFetchTags (Result Http.Error Tags)
-  | OnLoading
-  | OnFailure
   | SetSelectedCategoryId String
-  | SetSelectedTagId String
+  | SetSelectedTag String
   | SetSelectedDate String
 
 
@@ -34,7 +32,7 @@ type alias Model = {
     tags : (List Tag),
     selectedDate : String,
     selectedCategoryId : String,
-    selectedTagId : String
+    selectedTag : String
   }
 
 
@@ -42,44 +40,15 @@ initialState : Model
 initialState =
   { images = []
     , categories = []
-    , tags = [
-      {
-        tagId = 1,
-        tagName = "Un tag"
-      }
-      , {
-        tagId = 2,
-        tagName = "Un 2ème tag"
-      }
-      , {
-        tagId = 3,
-        tagName = "Un 3ème tag"
-      }
-      , {
-        tagId = 4,
-        tagName = "Un 4ème tag"
-      }
-      , {
-        tagId = 5,
-        tagName = "Un 5ème tag"
-      }
-      , {
-        tagId = 6,
-        tagName = "Un 6ème tag"
-      }
-      , {
-        tagId = 7,
-        tagName = "Un 7ème tag"
-      }
-    ]
+    , tags = []
     , selectedDate = "0"
     , selectedCategoryId = "0"
-    , selectedTagId = "0"
+    , selectedTag = "0"
   }
 
 
 subscriptions : Model -> Sub Msg
-subscriptions model =
+subscriptions _ =
   Sub.none
 
 
@@ -100,7 +69,7 @@ categoryOptionView category =
 
 tagOptionView : Tag -> Html Msg
 tagOptionView tag = 
-  option [ value (tag.tagId |> String.fromInt) ] [ text tag.tagName ]
+  option [ value (tag.tagName |> String.fromInt) ] [ text tag.tagTitle ]
 
 
 targetValueParseInt : Json.Decoder Int
@@ -116,7 +85,7 @@ filterBar (categories, tags) =
         [ option [ Attr.disabled True, Attr.selected True ] [ text "Catégories" ] ]
         ++ ( List.map (\category -> categoryOptionView category) categories)
       )
-      , select [ class "filter-option-input", Attr.multiple False, Events.on "change" (Json.map SetSelectedTagId targetValue) ] (
+      , select [ class "filter-option-input", Attr.multiple False, Events.on "change" (Json.map SetSelectedTag targetValue) ] (
         [ option [ Attr.disabled True, Attr.selected True ] [ text "Tags" ] ]
         ++ ( List.map (\tag -> tagOptionView tag) tags)
       )
@@ -131,9 +100,11 @@ filterBar (categories, tags) =
 imageView : Image -> Html Msg
 imageView image = 
   div [ class "galery-image-single-wrapper" ] [
-    img [ class "galery-image-single"
-      , src image.fileUrl
-      ] []
+    a [ Attr.class "galery-image-single-link", Attr.href ("images/" ++ (image.imageId |> String.fromInt)) ] [
+      img [ class "galery-image-single"
+        , src image.fileUrl
+        ] []
+    ]
   ]
 
 
@@ -142,13 +113,10 @@ galery model =
   div [ class "galery-content" ] ( 
     List.map imageView (List.filter(
       \image -> 
-        ((
-          image.categoryId == Maybe.withDefault 0 (model.selectedCategoryId |> String.toInt)
-          && (String.contains model.selectedDate image.createdAt)
-          -- TODO: Replace @image.imageId here by image.tags.contains ...
-          && image.imageId == Maybe.withDefault 0 (model.selectedTagId |> String.toInt)
-        )
-    )) model.images)
+        image.categoryId == Maybe.withDefault 0 (model.selectedCategoryId |> String.toInt)
+        && String.contains model.selectedDate image.createdAt
+        -- && image.imageId == Maybe.withDefault 0 (model.selectedTag |> String.toInt)
+    ) model.images)
   )
 
 
@@ -169,14 +137,10 @@ init _ =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    OnLoading ->
-      (initialState, Cmd.none)
-    OnFailure ->
-      (initialState, Cmd.none)
     SetSelectedCategoryId selectedCategoryId ->
       ( { model | selectedCategoryId = selectedCategoryId }, Cmd.none )
-    SetSelectedTagId selectedTagId ->
-      ( { model | selectedTagId = selectedTagId }, Cmd.none )
+    SetSelectedTag selectedTag ->
+      ( { model | selectedTag = selectedTag }, Cmd.none )
     SetSelectedDate selectedDate ->
       ( { model | selectedDate = selectedDate }, Cmd.none )
     OnFetchCategories result ->
@@ -194,7 +158,7 @@ update msg model =
     OnFetchTags result ->
       case result of
         Ok tags ->
-          ( model, Cmd.none)
+          ( { model | tags = tags } , Cmd.none)
         Err _ ->
           (model, Cmd.none)
 
