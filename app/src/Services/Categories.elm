@@ -1,17 +1,12 @@
-module Services.Categories exposing (Categories, Category, fetchCategory, fetchCategories, updateCategory, addCategory, deleteCategory)
+module Services.Categories exposing (fetchCategory, fetchCategories, updateCategory, addCategory, deleteCategory)
 
 import Http
 import Json.Decode as Decode
 import Json.Encode as Encode
+import Models exposing (Categories, Category)
 
-type alias Category =
-    { categoryId : Int
-    , categoryName : String
-    }
 
 apiUrl = "http://127.0.0.1:8001/api/categories"
-
-type alias Categories = List Category
 
 fetchCategories :  (Result Http.Error Categories -> msg) -> Cmd msg
 fetchCategories onFetch =
