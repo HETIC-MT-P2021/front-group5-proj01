@@ -17,7 +17,7 @@ type Model
     = Waiting Category
     | Failure
     | Loading
-    | UpdateSuccess Category
+    | Success Category
 
 
 type Msg = SubmitForm
@@ -63,7 +63,7 @@ update msg model =
     OnCategoryUpdate result ->
         case result of
             Ok category ->
-                (UpdateSuccess category, Cmd.none)
+                (Success category, Cmd.none)
 
             Err _ ->
                 (Failure, Cmd.none)
@@ -114,7 +114,7 @@ view model =
       , body = [ Html.text "Chargement..." ]
       }
 
-    UpdateSuccess category ->
+    Success category ->
       { title = "Modification d'une catégorie"
       , body = [ Html.h2 [] 
         [ Html.text ("La catégorie " ++ category.categoryName ++ " à été mise à jours") ] 

@@ -135,3 +135,40 @@ body {
   padding: 0 10px;
   margin: 5px 0;
 }
+
+#addImageForm {
+  display: flex;
+  width: 80%;
+  margin: 20px auto;
+  justify-content: center;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  text-align: center;
+  border: 2px solid black;
+  padding: 3%;
+  font-size: 1.1em;
+}
+
+#addImageForm p {
+  font-size: 1.3em;
+  margin-bottom: 3%;
+}
+
+#addImageForm label {
+  width: 100%;
+  display: block;
+  margin-top: 1%;
+}
+
+#addImageForm label input, #addImageForm label select , #addImageForm label textarea{
+  margin-left: 20%;
+}
+
+#addImageForm button, #addImageFileButton {
+  display: block;
+  margin: 30px auto;
+  color: blue;
+  border: 1px solid blue;
+  font-size: 1.2em;
+  padding: 1%;
+}
