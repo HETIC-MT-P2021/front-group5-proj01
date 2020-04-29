@@ -37,10 +37,6 @@ TODO:
 
 git clone https://github.com/HETIC-MT-P2021/front-group5-proj01.git
 
-docker run
-
-
-
  
 ```
 The app is now available at  http://localhost:8000
@@ -50,6 +46,7 @@ The app is now available at  http://localhost:8000
 Make sure that you have already started the Back of La Galeria De Papel
 ### Installing
 ```bash
+
 docker build --tag galeria:1.0 ./
 docker run --publish 8000:8080 --name galeria_app galeria:1.0
 
