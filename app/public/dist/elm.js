@@ -6512,7 +6512,7 @@ var $author$project$Pages$Categories$Create$Success = function (a) {
 	return {$: 3, a: a};
 };
 var $author$project$Services$Categories$apiUrl = 'http://127.0.0.1:8001/api/categories';
-var $author$project$Services$Categories$Category = F2(
+var $author$project$Models$Category = F2(
 	function (categoryId, categoryName) {
 		return {Z: categoryId, aM: categoryName};
 	});
@@ -6521,7 +6521,7 @@ var $elm$json$Json$Decode$int = _Json_decodeInt;
 var $elm$json$Json$Decode$string = _Json_decodeString;
 var $author$project$Services$Categories$categoryDecoder = A3(
 	$elm$json$Json$Decode$map2,
-	$author$project$Services$Categories$Category,
+	$author$project$Models$Category,
 	A2($elm$json$Json$Decode$field, 'categoryId', $elm$json$Json$Decode$int),
 	A2($elm$json$Json$Decode$field, 'categoryName', $elm$json$Json$Decode$string));
 var $elm$json$Json$Encode$object = function (pairs) {
