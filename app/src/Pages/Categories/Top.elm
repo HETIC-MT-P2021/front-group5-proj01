@@ -2,16 +2,18 @@ module Pages.Categories.Top exposing (..)
 
 import Http exposing (Error)
 import Html
-import Page exposing (Document, Page)
 import Html.Attributes exposing (class, href, style, id)
-import Models exposing (Category)
-import Services.Categories exposing(fetchCategories, Categories)
+import Html.Events exposing (onClick)
+import Page exposing (Document, Page)
+import Services.Categories exposing(fetchCategories, deleteCategory, Category, Categories)
 import Generated.Route as Route exposing (Route)
 
 type alias Flags =
     ()
 
-type Msg = OnFetchCategories (Result Http.Error Categories)
+type Msg = OnFetchCategories (Result Http.Error Categories) 
+  | DeleteCategory Int 
+  | OnDeleteCategories (Result Http.Error Category)
 
 type Model
   = Failure
@@ -51,7 +53,11 @@ update msg model =
 
         Err _ ->
           (Failure, Cmd.none)
+    DeleteCategory categoryId ->
+      ( Loading, deleteCategory categoryId OnDeleteCategories)
 
+    OnDeleteCategories category ->
+      ( Loading, fetchCategories OnFetchCategories )
 
 
 view : Model -> Document Msg
@@ -59,7 +65,12 @@ view model =
   case model of
     Failure ->
       { title = "Categories.Top"
-      , body = [Html.text "Impossible de charger les catégories."]
+      , body = [ 
+        Html.div [] 
+          [ Html.text "Impossible de charger les catégories."
+          , Html.a [ class "link", href (Route.toHref Route.Categories_Create) ] [ Html.text "Ajouter une catégorie" ]
+          ]
+      ]
       }
 
     Loading ->
@@ -73,17 +84,19 @@ view model =
           [ Html.text "Listes des catégories" ]
           , Html.div []
               [ Html.ul [ id "categoryUl"]
-              ( List.map (\category -> categoryLine category.categoryName) categories)  
+              ( List.map (\category -> categoryLine category) categories)  
               ]
               ,Html.a [ class "link", href (Route.toHref Route.Categories_Create) ] [ Html.text "Ajouter une catégorie" ]
           ]
       }
 
-categoryLine: String -> Html.Html msg
-categoryLine name = 
+
+categoryLine: Category -> Html.Html Msg
+categoryLine category = 
         Html.li [] 
             [ Html.p []
-                [ Html.text name ]
-            , Html.button []
+                [ Html.text category.categoryName ]
+            , Html.button [  Html.Events.onClick ( DeleteCategory category.categoryId ) ]
                 [ Html.text "Supprimer"]
+            ,Html.a [ class "link addCategoryButtons", href (Route.toHref (Route.Categories_Dynamic { param1 = String.fromInt category.categoryId } )) ] [ Html.text "Modifier" ]
         ]

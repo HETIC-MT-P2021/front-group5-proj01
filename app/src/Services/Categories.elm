@@ -5,7 +5,7 @@ import Json.Decode as Decode
 import Json.Encode as Encode
 import Models exposing (Category)
 
-apiUrl = "http://127.0.0.1:8000/api/categories"
+apiUrl = "http://127.0.0.1:8001/api/categories"
 
 type alias Categories = List Category
 
@@ -20,6 +20,17 @@ fetchCategories onFetch =
     , expect = Http.expectJson onFetch categoriesDecoder
     }
 
+fetchCategory: Maybe Int -> (Result Http.Error Category -> msg) ->  Cmd msg
+fetchCategory categoryId onFetch =
+    case categoryId of 
+        Just id ->
+            Http.get 
+            { url = categoryByIdUrl id
+            , expect = Http.expectJson onFetch categoryDecoder
+            }
+        Nothing -> 
+            Cmd.none
+
 addCategory : String -> (Result Http.Error Category -> msg) -> Cmd msg
 addCategory categoryName onSave =
     addCategoryRequest categoryName onSave
@@ -33,27 +44,47 @@ addCategoryRequest categoryName onSave =
         }   
 
 
---updateCategory : Category -> Cmd CategoriesMsg
---updateCategory category =
---    updateCategoryRequest category
+updateCategory : Category -> (Result Http.Error Category -> msg) -> Cmd msg
+updateCategory category onUpdate =
+    updateCategoryRequest category onUpdate
 
 
---updateCategoryRequest : Category -> Cmd CategoriesMsg
---updateCategoryRequest category =
---    Http.post
---        { url = updateCategoryUrl category.categoryId
---        , body = encodeCategory category |> Http.jsonBody
---        , expect = Http.expectJson OnCategorySave categoryDecoder
---        }   
+updateCategoryRequest : Category -> (Result Http.Error Category -> msg) -> Cmd msg
+updateCategoryRequest category onUpdate =
+    Http.request
+       { method = "PUT"
+        , headers = []
+        , url = categoryByIdUrl category.categoryId
+        , body = encodeCategory category |> Http.jsonBody
+        , expect = Http.expectJson onUpdate categoryDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }   
 
 
---updateCategoryUrl : Int -> String
---updateCategoryUrl categoryId =
---    apiUrl ++ "/" ++ String.fromInt categoryId
+deleteCategory: Int -> (Result Http.Error Category -> msg) -> Cmd msg
+deleteCategory categoryId onDelete =
+    deleteCategoryRequest categoryId onDelete
+
+deleteCategoryRequest : Int -> (Result Http.Error Category -> msg) -> Cmd msg
+deleteCategoryRequest categoryId onDelete =
+    Http.request
+       { method = "DELETE"
+        , headers = []
+        , url = categoryByIdUrl categoryId
+        , body = Encode.null |> Http.jsonBody
+        , expect = Http.expectJson onDelete categoryDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }   
+
+
+categoryByIdUrl : Int -> String
+categoryByIdUrl categoryId =
+    apiUrl ++ "/" ++ String.fromInt categoryId
+
 
 -- JSON handler
-
-
 
 categoryDecoder : Decode.Decoder Category
 categoryDecoder =

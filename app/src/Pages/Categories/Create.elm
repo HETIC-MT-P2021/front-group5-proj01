@@ -6,8 +6,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
 import Page exposing (Document, Page)
-import Models exposing (Category)
-import Services.Categories exposing(addCategory)
+import Services.Categories exposing(addCategory, Category)
 import Generated.Route as Route exposing (Route)
 
 type alias Flags =
@@ -87,7 +86,7 @@ view model =
                         , id "categoryInput" ] []
                     ]
                 , button [ id "categorySubmitButton" ]
-                    [ text "Submit"]
+                    [ text "Ajouter"]
             ]
         ] 
         }

@@ -17,6 +17,7 @@ type Route
     | Images_Top
     | Categories_Create
     | Images_Create
+    | Categories_Dynamic { param1 : String }
 
 
 fromUrl : Url -> Maybe Route
@@ -35,6 +36,9 @@ routes =
         , Parser.map Images_Top (Parser.s "images")
         , Parser.map Categories_Create (Parser.s "categories" </> Parser.s "create")
         , Parser.map Images_Create (Parser.s "images" </> Parser.s "create")
+        , (Parser.s "categories" </> Parser.string)
+          |> Parser.map (\param1 -> { param1 = param1 })
+          |> Parser.map Categories_Dynamic
         ]
 
 
@@ -67,6 +71,9 @@ toHref route =
                 
                 Images_Create ->
                     [ "images", "create" ]
+                
+                Categories_Dynamic { param1 } ->
+                    [ "categories", param1 ]
     in
     segments
         |> String.join "/"

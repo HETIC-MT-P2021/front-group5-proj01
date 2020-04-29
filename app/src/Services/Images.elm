@@ -5,7 +5,7 @@ import Json.Decode as Decode
 import Json.Encode as Encode
 import Models exposing (Image)
 
-apiUrl = "http://127.0.0.1:8000/api/image"
+apiUrl = "http://127.0.0.1:8001/api/image"
 
 type alias Images = List Image
 

@@ -18,6 +18,7 @@ import Pages.Categories.Top
 import Pages.Images.Top
 import Pages.Categories.Create
 import Pages.Images.Create
+import Pages.Categories.Dynamic
 
 
 
@@ -33,6 +34,7 @@ type Model
     | Images_Top_Model Pages.Images.Top.Model
     | Categories_Create_Model Pages.Categories.Create.Model
     | Images_Create_Model Pages.Images.Create.Model
+    | Categories_Dynamic_Model Pages.Categories.Dynamic.Model
 
 
 type Msg
@@ -44,6 +46,7 @@ type Msg
     | Images_Top_Msg Pages.Images.Top.Msg
     | Categories_Create_Msg Pages.Categories.Create.Msg
     | Images_Create_Msg Pages.Images.Create.Msg
+    | Categories_Dynamic_Msg Pages.Categories.Dynamic.Msg
 
 
 
@@ -66,6 +69,7 @@ type alias UpgradedPages =
     , images_top : UpgradedPage Pages.Images.Top.Flags Pages.Images.Top.Model Pages.Images.Top.Msg
     , categories_create : UpgradedPage Pages.Categories.Create.Flags Pages.Categories.Create.Model Pages.Categories.Create.Msg
     , images_create : UpgradedPage Pages.Images.Create.Flags Pages.Images.Create.Model Pages.Images.Create.Msg
+    , categories_dynamic : UpgradedPage Pages.Categories.Dynamic.Flags Pages.Categories.Dynamic.Model Pages.Categories.Dynamic.Msg
     }
 
 
@@ -79,6 +83,7 @@ pages =
     , images_top = Pages.Images.Top.page |> Page.upgrade Images_Top_Model Images_Top_Msg
     , categories_create = Pages.Categories.Create.page |> Page.upgrade Categories_Create_Model Categories_Create_Msg
     , images_create = Pages.Images.Create.page |> Page.upgrade Images_Create_Model Images_Create_Msg
+    , categories_dynamic = Pages.Categories.Dynamic.page |> Page.upgrade Categories_Dynamic_Model Categories_Dynamic_Msg
     }
 
 
@@ -112,6 +117,9 @@ init route =
         
         Route.Images_Create ->
             pages.images_create.init ()
+        
+        Route.Categories_Dynamic params ->
+            pages.categories_dynamic.init params
 
 
 
@@ -144,6 +152,9 @@ update bigMsg bigModel =
         
         ( Images_Create_Msg msg, Images_Create_Model model ) ->
             pages.images_create.update msg model
+        
+        ( Categories_Dynamic_Msg msg, Categories_Dynamic_Model model ) ->
+            pages.categories_dynamic.update msg model
         
         _ ->
             always ( bigModel, Cmd.none, Cmd.none )
@@ -179,6 +190,9 @@ bundle bigModel =
         
         Images_Create_Model model ->
             pages.images_create.bundle model
+        
+        Categories_Dynamic_Model model ->
+            pages.categories_dynamic.bundle model
 
 
 view : Model -> Global.Model -> Document Msg
