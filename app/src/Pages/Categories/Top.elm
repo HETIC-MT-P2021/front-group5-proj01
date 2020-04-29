@@ -14,7 +14,7 @@ type alias Flags =
 
 type Msg = OnFetchCategories (Result Http.Error Categories) 
   | DeleteCategory Int 
-  | OnDeleteCategories (Result Http.Error Category)
+  | OnDeleteCategories (Result Http.Error String)
 
 type Model
   = Failure
@@ -57,7 +57,7 @@ update msg model =
     DeleteCategory categoryId ->
       ( Loading, deleteCategory categoryId OnDeleteCategories)
 
-    OnDeleteCategories category ->
+    OnDeleteCategories isOk ->
       ( Loading, fetchCategories OnFetchCategories )
 
 

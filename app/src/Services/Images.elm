@@ -42,7 +42,7 @@ addImageRequest postImage onSave =
 
 uploadImageFile : File -> (Result Http.Error ImageUrl -> msg) -> Cmd msg
 uploadImageFile file onUpload =
-    uploadImageFile file onUpload
+    uploadImageRequest file onUpload
 
 uploadImageRequest : File -> (Result Http.Error ImageUrl -> msg) -> Cmd msg
 uploadImageRequest file onUpload =
