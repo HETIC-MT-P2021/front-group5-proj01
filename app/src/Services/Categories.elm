@@ -1,4 +1,4 @@
-module Services.Categories exposing (fetchCategory, fetchCategories, updateCategory, addCategory, deleteCategory)
+module Services.Categories exposing (..)
 
 import Http
 import Json.Decode as Decode
