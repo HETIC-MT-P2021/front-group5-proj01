@@ -4,8 +4,8 @@ import Http exposing (Error)
 import Html
 import Page exposing (Document, Page)
 import Html.Attributes exposing (class, href, style, id)
-import Models exposing (Image)
-import Services.Images exposing(fetchImages, Images)
+import Models exposing (Image, Images)
+import Services.Images exposing(fetchImages)
 import Generated.Route as Route exposing (Route)
 
 type alias Flags =
