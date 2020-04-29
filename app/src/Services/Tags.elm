@@ -6,7 +6,7 @@ import Json.Encode as Encode
 import Models exposing (Tag)
 
 
-apiUrl = "http://127.0.0.1:8001/api/tags"
+apiUrl = "http://127.0.0.1:8000/api/tags"
 
 
 type alias Tags = List Tag
@@ -25,15 +25,15 @@ fetchTags onFetch =
 
 
 addTag : String -> (Result Http.Error Tag -> msg) -> Cmd msg
-addTag tagName onSave =
-    addTagRequest tagName onSave
+addTag tagTitle onSave =
+    addTagRequest tagTitle onSave
 
 
 addTagRequest : String -> (Result Http.Error Tag -> msg) -> Cmd msg
-addTagRequest tagName onSave =
+addTagRequest tagTitle onSave =
     Http.post
         { url = apiUrl
-        , body = encodeTagName tagName |> Http.jsonBody
+        , body = encodeTagTitle tagTitle |> Http.jsonBody
         , expect = Http.expectJson onSave tagDecoder
         }
 
@@ -41,8 +41,8 @@ addTagRequest tagName onSave =
 tagDecoder : Decode.Decoder Tag
 tagDecoder =
     Decode.map2 Tag
-        (Decode.field "tagId" Decode.int)
-        (Decode.field "tagName" Decode.string)
+        (Decode.field "tagName" Decode.int)
+        (Decode.field "tagTitle" Decode.string)
 
 
 tagsDecoder : Decode.Decoder (List Tag)
@@ -54,18 +54,18 @@ encodeTag : Tag -> Encode.Value
 encodeTag tag =
     let
         attributes =
-            [ ( "tagId", Encode.int tag.tagId )
-            , ( "tagName", Encode.string tag.tagName )
+            [ ( "tagName", Encode.int tag.tagName )
+            , ( "tagTitle", Encode.string tag.tagTitle )
             ]
     in
     Encode.object attributes
 
 
-encodeTagName: String ->  Encode.Value
-encodeTagName tagName =
+encodeTagTitle: String ->  Encode.Value
+encodeTagTitle tagTitle =
     let
         attributes =
-            [ ( "tagName", Encode.string tagName )
+            [ ( "tagTitle", Encode.string tagTitle )
             ]
     in
     Encode.object attributes

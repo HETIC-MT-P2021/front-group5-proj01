@@ -5,7 +5,7 @@ import Json.Decode as Decode
 import Json.Encode as Encode
 import Models exposing (Image)
 
-apiUrl = "http://127.0.0.1:8001/api/image"
+apiUrl = "http://127.0.0.1:8000/api/image"
 
 type alias Images = List Image
 
@@ -20,6 +20,18 @@ fetchImages onFetch =
     , expect = Http.expectJson onFetch imagesDecoder
     }
 
+
+fetchImage: Maybe Int -> (Result Http.Error Image -> msg) ->  Cmd msg
+fetchImage imageId onFetch =
+    case imageId of 
+        Just id ->
+            Http.get 
+            { url = imageByIdUrl id
+            , expect = Http.expectJson onFetch imageDecoder
+            }
+        Nothing -> 
+            Cmd.none
+
 addImage : String -> (Result Http.Error Image -> msg) -> Cmd msg
 addImage name onSave =
     addImageRequest name onSave
@@ -31,6 +43,22 @@ addImageRequest name onSave =
         , body = encodeImageTitle name |> Http.jsonBody
         , expect = Http.expectJson onSave imageDecoder
         }
+
+updateImage : Image -> (Result Http.Error Image -> msg) -> Cmd msg
+updateImage image onUpdate =
+    updateImageRequest image onUpdate
+
+updateImageRequest : Image -> (Result Http.Error Image -> msg) -> Cmd msg
+updateImageRequest image onUpdate =
+    Http.request
+       { method = "PUT"
+        , headers = []
+        , url = imageByIdUrl image.imageId
+        , body = encodeImage image |> Http.jsonBody
+        , expect = Http.expectJson onUpdate imageDecoder
+        , timeout = Nothing
+        , tracker = Nothing
+        }  
 
 imageDecoder : Decode.Decoder Image
 imageDecoder =
@@ -68,3 +96,7 @@ encodeImageTitle imageTitle =
             ]
     in
     Encode.object attributes
+
+imageByIdUrl : Int -> String
+imageByIdUrl imageId =
+    apiUrl ++ "/" ++ String.fromInt imageId

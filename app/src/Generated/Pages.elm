@@ -19,6 +19,7 @@ import Pages.Images.Top
 import Pages.Categories.Create
 import Pages.Images.Create
 import Pages.Categories.Dynamic
+import Pages.Images.Dynamic
 
 
 
@@ -35,6 +36,7 @@ type Model
     | Categories_Create_Model Pages.Categories.Create.Model
     | Images_Create_Model Pages.Images.Create.Model
     | Categories_Dynamic_Model Pages.Categories.Dynamic.Model
+    | Images_Dynamic_Model Pages.Images.Dynamic.Model
 
 
 type Msg
@@ -47,6 +49,7 @@ type Msg
     | Categories_Create_Msg Pages.Categories.Create.Msg
     | Images_Create_Msg Pages.Images.Create.Msg
     | Categories_Dynamic_Msg Pages.Categories.Dynamic.Msg
+    | Images_Dynamic_Msg Pages.Images.Dynamic.Msg
 
 
 
@@ -70,6 +73,7 @@ type alias UpgradedPages =
     , categories_create : UpgradedPage Pages.Categories.Create.Flags Pages.Categories.Create.Model Pages.Categories.Create.Msg
     , images_create : UpgradedPage Pages.Images.Create.Flags Pages.Images.Create.Model Pages.Images.Create.Msg
     , categories_dynamic : UpgradedPage Pages.Categories.Dynamic.Flags Pages.Categories.Dynamic.Model Pages.Categories.Dynamic.Msg
+    , images_dynamic : UpgradedPage Pages.Images.Dynamic.Flags Pages.Images.Dynamic.Model Pages.Images.Dynamic.Msg
     }
 
 
@@ -84,6 +88,7 @@ pages =
     , categories_create = Pages.Categories.Create.page |> Page.upgrade Categories_Create_Model Categories_Create_Msg
     , images_create = Pages.Images.Create.page |> Page.upgrade Images_Create_Model Images_Create_Msg
     , categories_dynamic = Pages.Categories.Dynamic.page |> Page.upgrade Categories_Dynamic_Model Categories_Dynamic_Msg
+    , images_dynamic = Pages.Images.Dynamic.page |> Page.upgrade Images_Dynamic_Model Images_Dynamic_Msg
     }
 
 
@@ -120,6 +125,9 @@ init route =
         
         Route.Categories_Dynamic params ->
             pages.categories_dynamic.init params
+        
+        Route.Images_Dynamic params ->
+            pages.images_dynamic.init params
 
 
 
@@ -155,6 +163,9 @@ update bigMsg bigModel =
         
         ( Categories_Dynamic_Msg msg, Categories_Dynamic_Model model ) ->
             pages.categories_dynamic.update msg model
+        
+        ( Images_Dynamic_Msg msg, Images_Dynamic_Model model ) ->
+            pages.images_dynamic.update msg model
         
         _ ->
             always ( bigModel, Cmd.none, Cmd.none )
@@ -193,6 +204,9 @@ bundle bigModel =
         
         Categories_Dynamic_Model model ->
             pages.categories_dynamic.bundle model
+        
+        Images_Dynamic_Model model ->
+            pages.images_dynamic.bundle model
 
 
 view : Model -> Global.Model -> Document Msg

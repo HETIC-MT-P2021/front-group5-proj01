@@ -86,7 +86,7 @@ view : Model -> Document Msg
 view model =
   case model of
     Waiting category -> 
-        { title = "Modification d'une catégorie"
+        { title = "Modification | " ++ category.categoryName
         , body = [ Html.form 
             [ Html.Events.onSubmit SubmitForm] 
             [
