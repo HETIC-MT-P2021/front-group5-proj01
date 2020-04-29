@@ -3,13 +3,10 @@ module Services.Tags exposing (..)
 import Http
 import Json.Decode as Decode
 import Json.Encode as Encode
-import Models exposing (Tag)
+import Models exposing (Tag, Tags)
 
 
 apiUrl = "http://127.0.0.1:8000/api/tags"
-
-
-type alias Tags = List Tag
 
 
 type TagsMsg

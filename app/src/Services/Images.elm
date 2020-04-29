@@ -1,17 +1,24 @@
 module Services.Images exposing (..)
 
 import Http
+import File exposing (File)
 import Json.Decode as Decode
 import Json.Encode as Encode
-import Models exposing (Image)
+import Models exposing (Image, Images)
 
 apiUrl = "http://127.0.0.1:8000/api/image"
 
-type alias Images = List Image
+type alias ImageUrl = { fileUrl: String }
 
 type ImagesMsg
     = OnFetchImages (Result Http.Error Images)
-
+type alias PostImage =
+    { fileName: String
+    , fileUrl: String
+    , categoryId: Int
+    , tags: String
+    , description: String
+    }
 
 fetchImages :  (Result Http.Error Images -> msg) -> Cmd msg
 fetchImages onFetch =
@@ -19,7 +26,6 @@ fetchImages onFetch =
     { url = apiUrl
     , expect = Http.expectJson onFetch imagesDecoder
     }
-
 
 fetchImage: Maybe Int -> (Result Http.Error Image -> msg) ->  Cmd msg
 fetchImage imageId onFetch =
@@ -32,16 +38,30 @@ fetchImage imageId onFetch =
         Nothing -> 
             Cmd.none
 
-addImage : String -> (Result Http.Error Image -> msg) -> Cmd msg
-addImage name onSave =
-    addImageRequest name onSave
 
-addImageRequest : String -> (Result Http.Error Image -> msg) -> Cmd msg
-addImageRequest name onSave =
+addImage : PostImage -> (Result Http.Error Image -> msg) -> Cmd msg
+addImage postImage onSave =
+    addImageRequest postImage onSave
+
+addImageRequest : PostImage -> (Result Http.Error Image -> msg) -> Cmd msg
+addImageRequest postImage onSave =
     Http.post
         { url = apiUrl
-        , body = encodeImageTitle name |> Http.jsonBody
+        , body = encodePostImage postImage |> Http.jsonBody
         , expect = Http.expectJson onSave imageDecoder
+        }
+
+
+uploadImageFile : File -> (Result Http.Error ImageUrl -> msg) -> Cmd msg
+uploadImageFile file onUpload =
+    uploadImageFile file onUpload
+
+uploadImageRequest : File -> (Result Http.Error ImageUrl -> msg) -> Cmd msg
+uploadImageRequest file onUpload =
+    Http.post
+        { url = apiUrl ++ "/upload"
+        , body = Http.fileBody file
+        , expect = Http.expectJson onUpload fileUrlDecoder
         }
 
 updateImage : Image -> (Result Http.Error Image -> msg) -> Cmd msg
@@ -74,6 +94,23 @@ imagesDecoder : Decode.Decoder (List Image)
 imagesDecoder =
     Decode.list imageDecoder
 
+fileUrlDecoder: Decode.Decoder ImageUrl
+fileUrlDecoder = 
+    Decode.map ImageUrl
+        (Decode.field "fileUrl" Decode.string)
+
+encodePostImage: PostImage -> Encode.Value
+encodePostImage postImage =
+    let
+        attributes =
+            [ ( "fileName", Encode.string postImage.fileName )
+            , ( "description", Encode.string postImage.description )
+            , ( "fileUrl", Encode.string postImage.fileUrl )
+            , ( "categoryId", Encode.int postImage.categoryId )
+            , ( "tags", Encode.string postImage.tags )
+            ]
+    in
+    Encode.object attributes
 encodeImage : Image -> Encode.Value
 encodeImage image =
     let
