@@ -3,6 +3,7 @@ elm-stuff
 node_modules
 
 public/dist/elm.js
+app/public/dist/elm.js
 elm.js
 app/src/Generated/Pages.elm
 app/src/Generated/Route.elm
