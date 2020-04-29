@@ -6,7 +6,7 @@ import Json.Encode as Encode
 import Models exposing (Tag, Tags)
 
 
-apiUrl = "http://127.0.0.1:8000/api/tags"
+apiUrl = "http://127.0.0.1:8001/api/tags"
 
 
 type TagsMsg

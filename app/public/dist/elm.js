@@ -11385,7 +11385,7 @@ var $author$project$Pages$Categories$Create$OnCategorySave = function (a) {
 var $author$project$Pages$Categories$Create$Success = function (a) {
 	return {$: 'Success', a: a};
 };
-var $author$project$Services$Categories$apiUrl = 'http://127.0.0.1:8000/api/categories';
+var $author$project$Services$Categories$apiUrl = 'http://127.0.0.1:8001/api/categories';
 var $author$project$Models$Category = F2(
 	function (categoryId, categoryName) {
 		return {categoryId: categoryId, categoryName: categoryName};
@@ -12136,13 +12136,19 @@ var $author$project$Pages$Categories$Top$OnDeleteCategories = function (a) {
 var $author$project$Pages$Categories$Top$Success = function (a) {
 	return {$: 'Success', a: a};
 };
+var $elm$http$Http$expectString = function (toMsg) {
+	return A2(
+		$elm$http$Http$expectStringResponse,
+		toMsg,
+		$elm$http$Http$resolve($elm$core$Result$Ok));
+};
 var $elm$json$Json$Encode$null = _Json_encodeNull;
 var $author$project$Services$Categories$deleteCategoryRequest = F2(
 	function (categoryId, onDelete) {
 		return $elm$http$Http$request(
 			{
 				body: $elm$http$Http$jsonBody($elm$json$Json$Encode$null),
-				expect: A2($elm$http$Http$expectJson, onDelete, $author$project$Services$Categories$categoryDecoder),
+				expect: $elm$http$Http$expectString(onDelete),
 				headers: _List_Nil,
 				method: 'DELETE',
 				timeout: $elm$core$Maybe$Nothing,
@@ -12173,7 +12179,7 @@ var $author$project$Pages$Categories$Top$update = F2(
 					$author$project$Pages$Categories$Top$Loading,
 					A2($author$project$Services$Categories$deleteCategory, categoryId, $author$project$Pages$Categories$Top$OnDeleteCategories));
 			default:
-				var category = msg.a;
+				var isOk = msg.a;
 				return _Utils_Tuple2(
 					$author$project$Pages$Categories$Top$Loading,
 					$author$project$Services$Categories$fetchCategories($author$project$Pages$Categories$Top$OnFetchCategories));
@@ -12338,7 +12344,7 @@ var $author$project$Pages$Images$Create$OnPostImage = function (a) {
 var $author$project$Pages$Images$Create$OnUploadFile = function (a) {
 	return {$: 'OnUploadFile', a: a};
 };
-var $author$project$Services$Images$apiUrl = 'http://127.0.0.1:8000/api/image';
+var $author$project$Services$Images$apiUrl = 'http://127.0.0.1:8001/api/image';
 var $author$project$Services$Images$encodePostImage = function (postImage) {
 	var attributes = _List_fromArray(
 		[
@@ -12400,16 +12406,26 @@ var $elm$file$File$Select$file = F2(
 			_File_uploadOne(mimes));
 	});
 var $elm$file$File$name = _File_name;
+var $elm$http$Http$fileBody = _Http_pair('');
+var $author$project$Services$Images$ImageUrl = function (fileUrl) {
+	return {fileUrl: fileUrl};
+};
+var $author$project$Services$Images$fileUrlDecoder = A2(
+	$elm$json$Json$Decode$map,
+	$author$project$Services$Images$ImageUrl,
+	A2($elm$json$Json$Decode$field, 'fileUrl', $elm$json$Json$Decode$string));
+var $author$project$Services$Images$uploadImageRequest = F2(
+	function (file, onUpload) {
+		return $elm$http$Http$post(
+			{
+				body: $elm$http$Http$fileBody(file),
+				expect: A2($elm$http$Http$expectJson, onUpload, $author$project$Services$Images$fileUrlDecoder),
+				url: $author$project$Services$Images$apiUrl + '/upload'
+			});
+	});
 var $author$project$Services$Images$uploadImageFile = F2(
 	function (file, onUpload) {
-		uploadImageFile:
-		while (true) {
-			var $temp$file = file,
-				$temp$onUpload = onUpload;
-			file = $temp$file;
-			onUpload = $temp$onUpload;
-			continue uploadImageFile;
-		}
+		return A2($author$project$Services$Images$uploadImageRequest, file, onUpload);
 	});
 var $author$project$Pages$Images$Create$update = F2(
 	function (msg, model) {
@@ -13194,7 +13210,7 @@ var $author$project$Pages$Top$OnFetchImages = function (a) {
 var $author$project$Pages$Top$OnFetchTags = function (a) {
 	return {$: 'OnFetchTags', a: a};
 };
-var $author$project$Services$Tags$apiUrl = 'http://127.0.0.1:8000/api/tags';
+var $author$project$Services$Tags$apiUrl = 'http://127.0.0.1:8001/api/tags';
 var $author$project$Models$Tag = F2(
 	function (tagName, tagTitle) {
 		return {tagName: tagName, tagTitle: tagTitle};
@@ -14072,4 +14088,4 @@ var $author$project$Main$view = function (model) {
 var $author$project$Main$main = $elm$browser$Browser$application(
 	{init: $author$project$Main$init, onUrlChange: $author$project$Main$UrlChanged, onUrlRequest: $author$project$Main$LinkClicked, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
-	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.About.Msg":{"args":[],"type":"Basics.Never"},"Pages.Home.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Models.Categories":{"args":[],"type":"List.List Models.Category"},"Models.Category":{"args":[],"type":"{ categoryId : Basics.Int, categoryName : String.String }"},"Models.Image":{"args":[],"type":"{ imageId : Basics.Int, fileName : String.String, description : String.String, createdAt : String.String, fileUrl : String.String, categoryId : Basics.Int }"},"Services.Images.ImageUrl":{"args":[],"type":"{ fileUrl : String.String }"},"Models.Images":{"args":[],"type":"List.List Models.Image"},"Models.Tag":{"args":[],"type":"{ tagName : Basics.Int, tagTitle : String.String }"},"Models.Tags":{"args":[],"type":"List.List Models.Tag"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"About_Msg":["Pages.About.Msg"],"Home_Msg":["Pages.Home.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Categories_Top_Msg":["Pages.Categories.Top.Msg"],"Images_Top_Msg":["Pages.Images.Top.Msg"],"Categories_Create_Msg":["Pages.Categories.Create.Msg"],"Images_Create_Msg":["Pages.Images.Create.Msg"],"Categories_Dynamic_Msg":["Pages.Categories.Dynamic.Msg"],"Images_Dynamic_Msg":["Pages.Images.Dynamic.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Categories.Create.Msg":{"args":[],"tags":{"SubmitForm":["String.String"],"SetCategoryName":["String.String"],"OnCategorySave":["Result.Result Http.Error Models.Category"],"ResetForm":[]}},"Pages.Categories.Dynamic.Msg":{"args":[],"tags":{"SubmitForm":[],"SetCategoryName":["String.String"],"OnCategoryUpdate":["Result.Result Http.Error Models.Category"],"OnCategoryFetch":["Result.Result Http.Error Models.Category"]}},"Pages.Categories.Top.Msg":{"args":[],"tags":{"OnFetchCategories":["Result.Result Http.Error Models.Categories"],"DeleteCategory":["Basics.Int"],"OnDeleteCategories":["Result.Result Http.Error Models.Category"]}},"Pages.Images.Create.Msg":{"args":[],"tags":{"ImageRequested":[],"ImageLoaded":["File.File"],"OnFetchCategories":["Result.Result Http.Error Models.Categories"],"SetImageDescription":["String.String"],"SetSelectedCategory":["String.String"],"SetSelectedTag":["String.String"],"SubmitForm":[],"OnUploadFile":["Result.Result Http.Error Services.Images.ImageUrl"],"OnPostImage":["Result.Result Http.Error Models.Image"]}},"Pages.Images.Dynamic.Msg":{"args":[],"tags":{"SubmitForm":[],"SetImageName":["String.String"],"OnImageUpdate":["Result.Result Http.Error Models.Image"],"OnImageFetch":["Result.Result Http.Error Models.Image"]}},"Pages.Images.Top.Msg":{"args":[],"tags":{"OnFetchImages":["Result.Result Http.Error Models.Images"]}},"Pages.Top.Msg":{"args":[],"tags":{"OnFetchImages":["Result.Result Http.Error Models.Images"],"OnFetchCategories":["Result.Result Http.Error Models.Categories"],"OnFetchTags":["Result.Result Http.Error Models.Tags"],"SetSelectedCategoryId":["String.String"],"SetSelectedTag":["String.String"],"SetSelectedDate":["String.String"]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"About":[],"Home":[],"NotFound":[],"Categories_Top":[],"Images_Top":[],"Categories_Create":[],"Images_Create":[],"Categories_Dynamic":["{ param1 : String.String }"],"Images_Dynamic":["{ param1 : String.String }"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"File.File":{"args":[],"tags":{"File":[]}},"List.List":{"args":["a"],"tags":{}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));
+	$elm$json$Json$Decode$succeed(_Utils_Tuple0))({"versions":{"elm":"0.19.1"},"types":{"message":"Main.Msg","aliases":{"Url.Url":{"args":[],"type":"{ protocol : Url.Protocol, host : String.String, port_ : Maybe.Maybe Basics.Int, path : String.String, query : Maybe.Maybe String.String, fragment : Maybe.Maybe String.String }"},"Pages.About.Msg":{"args":[],"type":"Basics.Never"},"Pages.Home.Msg":{"args":[],"type":"Basics.Never"},"Pages.NotFound.Msg":{"args":[],"type":"Basics.Never"},"Models.Categories":{"args":[],"type":"List.List Models.Category"},"Models.Category":{"args":[],"type":"{ categoryId : Basics.Int, categoryName : String.String }"},"Models.Image":{"args":[],"type":"{ imageId : Basics.Int, fileName : String.String, description : String.String, createdAt : String.String, fileUrl : String.String, categoryId : Basics.Int }"},"Services.Images.ImageUrl":{"args":[],"type":"{ fileUrl : String.String }"},"Models.Images":{"args":[],"type":"List.List Models.Image"},"Models.Tag":{"args":[],"type":"{ tagName : Basics.Int, tagTitle : String.String }"},"Models.Tags":{"args":[],"type":"List.List Models.Tag"}},"unions":{"Main.Msg":{"args":[],"tags":{"LinkClicked":["Browser.UrlRequest"],"UrlChanged":["Url.Url"],"Global":["Global.Msg"],"Page":["Generated.Pages.Msg"]}},"Basics.Int":{"args":[],"tags":{"Int":[]}},"Maybe.Maybe":{"args":["a"],"tags":{"Just":["a"],"Nothing":[]}},"Generated.Pages.Msg":{"args":[],"tags":{"Top_Msg":["Pages.Top.Msg"],"About_Msg":["Pages.About.Msg"],"Home_Msg":["Pages.Home.Msg"],"NotFound_Msg":["Pages.NotFound.Msg"],"Categories_Top_Msg":["Pages.Categories.Top.Msg"],"Images_Top_Msg":["Pages.Images.Top.Msg"],"Categories_Create_Msg":["Pages.Categories.Create.Msg"],"Images_Create_Msg":["Pages.Images.Create.Msg"],"Categories_Dynamic_Msg":["Pages.Categories.Dynamic.Msg"],"Images_Dynamic_Msg":["Pages.Images.Dynamic.Msg"]}},"Global.Msg":{"args":[],"tags":{"Navigate":["Generated.Route.Route"]}},"Url.Protocol":{"args":[],"tags":{"Http":[],"Https":[]}},"String.String":{"args":[],"tags":{"String":[]}},"Browser.UrlRequest":{"args":[],"tags":{"Internal":["Url.Url"],"External":["String.String"]}},"Pages.Categories.Create.Msg":{"args":[],"tags":{"SubmitForm":["String.String"],"SetCategoryName":["String.String"],"OnCategorySave":["Result.Result Http.Error Models.Category"],"ResetForm":[]}},"Pages.Categories.Dynamic.Msg":{"args":[],"tags":{"SubmitForm":[],"SetCategoryName":["String.String"],"OnCategoryUpdate":["Result.Result Http.Error Models.Category"],"OnCategoryFetch":["Result.Result Http.Error Models.Category"]}},"Pages.Categories.Top.Msg":{"args":[],"tags":{"OnFetchCategories":["Result.Result Http.Error Models.Categories"],"DeleteCategory":["Basics.Int"],"OnDeleteCategories":["Result.Result Http.Error String.String"]}},"Pages.Images.Create.Msg":{"args":[],"tags":{"ImageRequested":[],"ImageLoaded":["File.File"],"OnFetchCategories":["Result.Result Http.Error Models.Categories"],"SetImageDescription":["String.String"],"SetSelectedCategory":["String.String"],"SetSelectedTag":["String.String"],"SubmitForm":[],"OnUploadFile":["Result.Result Http.Error Services.Images.ImageUrl"],"OnPostImage":["Result.Result Http.Error Models.Image"]}},"Pages.Images.Dynamic.Msg":{"args":[],"tags":{"SubmitForm":[],"SetImageName":["String.String"],"OnImageUpdate":["Result.Result Http.Error Models.Image"],"OnImageFetch":["Result.Result Http.Error Models.Image"]}},"Pages.Images.Top.Msg":{"args":[],"tags":{"OnFetchImages":["Result.Result Http.Error Models.Images"]}},"Pages.Top.Msg":{"args":[],"tags":{"OnFetchImages":["Result.Result Http.Error Models.Images"],"OnFetchCategories":["Result.Result Http.Error Models.Categories"],"OnFetchTags":["Result.Result Http.Error Models.Tags"],"SetSelectedCategoryId":["String.String"],"SetSelectedTag":["String.String"],"SetSelectedDate":["String.String"]}},"Basics.Never":{"args":[],"tags":{"JustOneMore":["Basics.Never"]}},"Generated.Route.Route":{"args":[],"tags":{"Top":[],"About":[],"Home":[],"NotFound":[],"Categories_Top":[],"Images_Top":[],"Categories_Create":[],"Images_Create":[],"Categories_Dynamic":["{ param1 : String.String }"],"Images_Dynamic":["{ param1 : String.String }"]}},"Http.Error":{"args":[],"tags":{"BadUrl":["String.String"],"Timeout":[],"NetworkError":[],"BadStatus":["Basics.Int"],"BadBody":["String.String"]}},"File.File":{"args":[],"tags":{"File":[]}},"List.List":{"args":["a"],"tags":{}},"Result.Result":{"args":["error","value"],"tags":{"Ok":["value"],"Err":["error"]}}}}})}});}(this));

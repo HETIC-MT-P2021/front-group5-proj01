@@ -6,7 +6,7 @@ import Json.Encode as Encode
 import Models exposing (Categories, Category)
 
 
-apiUrl = "http://127.0.0.1:8000/api/categories"
+apiUrl = "http://127.0.0.1:8001/api/categories"
 
 fetchCategories :  (Result Http.Error Categories -> msg) -> Cmd msg
 fetchCategories onFetch =
@@ -57,18 +57,18 @@ updateCategoryRequest category onUpdate =
         }   
 
 
-deleteCategory: Int -> (Result Http.Error Category -> msg) -> Cmd msg
+deleteCategory: Int -> (Result Http.Error String -> msg) -> Cmd msg
 deleteCategory categoryId onDelete =
     deleteCategoryRequest categoryId onDelete
 
-deleteCategoryRequest : Int -> (Result Http.Error Category -> msg) -> Cmd msg
+deleteCategoryRequest : Int -> (Result Http.Error String -> msg) -> Cmd msg
 deleteCategoryRequest categoryId onDelete =
     Http.request
        { method = "DELETE"
         , headers = []
         , url = categoryByIdUrl categoryId
         , body = Encode.null |> Http.jsonBody
-        , expect = Http.expectJson onDelete categoryDecoder
+        , expect = Http.expectString onDelete
         , timeout = Nothing
         , tracker = Nothing
         }   
