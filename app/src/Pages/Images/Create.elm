@@ -6,6 +6,7 @@ import File exposing (File)
 import Html.Events exposing (..)
 import Html.Attributes exposing (..)
 import Json.Decode as D
+import Services.Images exposing (uploadImage)
 
 
 type alias Flags =

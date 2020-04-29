@@ -1859,7 +1859,7 @@ var _Platform_worker = F4(function(impl, flagDecoder, debugMetadata, args)
 		args,
 		impl.k,
 		impl.n,
-		impl.a3,
+		impl.a9,
 		function() { return function() {} }
 	);
 });
@@ -3930,9 +3930,9 @@ var _Browser_element = _Debugger_element || F4(function(impl, flagDecoder, debug
 		args,
 		impl.k,
 		impl.n,
-		impl.a3,
+		impl.a9,
 		function(sendToApp, initialModel) {
-			var view = impl.a6;
+			var view = impl.bd;
 			/**/
 			var domNode = args['node'];
 			//*/
@@ -3966,10 +3966,10 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 		args,
 		impl.k,
 		impl.n,
-		impl.a3,
+		impl.a9,
 		function(sendToApp, initialModel) {
 			var divertHrefToApp = impl.U && impl.U(sendToApp)
-			var view = impl.a6;
+			var view = impl.bd;
 			var title = _VirtualDom_doc.title;
 			var bodyNode = _VirtualDom_doc.body;
 			var currNode = _VirtualDom_virtualize(bodyNode);
@@ -3982,7 +3982,7 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 				bodyNode = _VirtualDom_applyPatches(bodyNode, currNode, patches, sendToApp);
 				currNode = nextNode;
 				_VirtualDom_divertHrefToApp = 0;
-				(title !== doc.aD) && (_VirtualDom_doc.title = title = doc.aD);
+				(title !== doc.aF) && (_VirtualDom_doc.title = title = doc.aF);
 			});
 		}
 	);
@@ -4038,8 +4038,8 @@ function _Browser_makeAnimator(model, draw)
 
 function _Browser_application(impl)
 {
-	var onUrlChange = impl.aW;
-	var onUrlRequest = impl.aX;
+	var onUrlChange = impl.a0;
+	var onUrlRequest = impl.a1;
 	var key = function() { key.a(onUrlChange(_Browser_getUrl())); };
 
 	return _Browser_document({
@@ -4059,9 +4059,9 @@ function _Browser_application(impl)
 					var next = $elm$url$Url$fromString(href).a;
 					sendToApp(onUrlRequest(
 						(next
-							&& curr.as === next.as
+							&& curr.at === next.at
 							&& curr.ag === next.ag
-							&& curr.ap.a === next.ap.a
+							&& curr.aq.a === next.aq.a
 						)
 							? $elm$browser$Browser$Internal(next)
 							: $elm$browser$Browser$External(href)
@@ -4073,9 +4073,9 @@ function _Browser_application(impl)
 		{
 			return A3(impl.k, flags, _Browser_getUrl(), key);
 		},
-		a6: impl.a6,
+		bd: impl.bd,
 		n: impl.n,
-		a3: impl.a3
+		a9: impl.a9
 	});
 }
 
@@ -4141,17 +4141,17 @@ var _Browser_decodeEvent = F2(function(decoder, event)
 function _Browser_visibilityInfo()
 {
 	return (typeof _VirtualDom_doc.hidden !== 'undefined')
-		? { aT: 'hidden', aN: 'visibilitychange' }
+		? { aZ: 'hidden', aP: 'visibilitychange' }
 		:
 	(typeof _VirtualDom_doc.mozHidden !== 'undefined')
-		? { aT: 'mozHidden', aN: 'mozvisibilitychange' }
+		? { aZ: 'mozHidden', aP: 'mozvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.msHidden !== 'undefined')
-		? { aT: 'msHidden', aN: 'msvisibilitychange' }
+		? { aZ: 'msHidden', aP: 'msvisibilitychange' }
 		:
 	(typeof _VirtualDom_doc.webkitHidden !== 'undefined')
-		? { aT: 'webkitHidden', aN: 'webkitvisibilitychange' }
-		: { aT: 'hidden', aN: 'visibilitychange' };
+		? { aZ: 'webkitHidden', aP: 'webkitvisibilitychange' }
+		: { aZ: 'hidden', aP: 'visibilitychange' };
 }
 
 
@@ -4232,11 +4232,11 @@ var _Browser_call = F2(function(functionName, id)
 function _Browser_getViewport()
 {
 	return {
-		ay: _Browser_getScene(),
-		aF: {
-			aH: _Browser_window.pageXOffset,
-			aI: _Browser_window.pageYOffset,
-			aG: _Browser_doc.documentElement.clientWidth,
+		az: _Browser_getScene(),
+		aH: {
+			aJ: _Browser_window.pageXOffset,
+			aK: _Browser_window.pageYOffset,
+			aI: _Browser_doc.documentElement.clientWidth,
 			af: _Browser_doc.documentElement.clientHeight
 		}
 	};
@@ -4247,7 +4247,7 @@ function _Browser_getScene()
 	var body = _Browser_doc.body;
 	var elem = _Browser_doc.documentElement;
 	return {
-		aG: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
+		aI: Math.max(body.scrollWidth, body.offsetWidth, elem.scrollWidth, elem.offsetWidth, elem.clientWidth),
 		af: Math.max(body.scrollHeight, body.offsetHeight, elem.scrollHeight, elem.offsetHeight, elem.clientHeight)
 	};
 }
@@ -4271,14 +4271,14 @@ function _Browser_getViewportOf(id)
 	return _Browser_withNode(id, function(node)
 	{
 		return {
-			ay: {
-				aG: node.scrollWidth,
+			az: {
+				aI: node.scrollWidth,
 				af: node.scrollHeight
 			},
-			aF: {
-				aH: node.scrollLeft,
-				aI: node.scrollTop,
-				aG: node.clientWidth,
+			aH: {
+				aJ: node.scrollLeft,
+				aK: node.scrollTop,
+				aI: node.clientWidth,
 				af: node.clientHeight
 			}
 		};
@@ -4309,17 +4309,17 @@ function _Browser_getElement(id)
 		var x = _Browser_window.pageXOffset;
 		var y = _Browser_window.pageYOffset;
 		return {
-			ay: _Browser_getScene(),
-			aF: {
-				aH: x,
-				aI: y,
-				aG: _Browser_doc.documentElement.clientWidth,
+			az: _Browser_getScene(),
+			aH: {
+				aJ: x,
+				aK: y,
+				aI: _Browser_doc.documentElement.clientWidth,
 				af: _Browser_doc.documentElement.clientHeight
 			},
-			aP: {
-				aH: x + rect.left,
-				aI: y + rect.top,
-				aG: rect.width,
+			aT: {
+				aJ: x + rect.left,
+				aK: y + rect.top,
+				aI: rect.width,
 				af: rect.height
 			}
 		};
@@ -4389,12 +4389,12 @@ var _Http_toTask = F3(function(router, toTask, request)
 		xhr.addEventListener('error', function() { done($elm$http$Http$NetworkError_); });
 		xhr.addEventListener('timeout', function() { done($elm$http$Http$Timeout_); });
 		xhr.addEventListener('load', function() { done(_Http_toResponse(request.G.b, xhr)); });
-		$elm$core$Maybe$isJust(request.aE) && _Http_track(router, xhr, request.aE.a);
+		$elm$core$Maybe$isJust(request.aG) && _Http_track(router, xhr, request.aG.a);
 
 		try {
-			xhr.open(request.aj, request.a5, true);
+			xhr.open(request.ak, request.bc, true);
 		} catch (e) {
-			return done($elm$http$Http$BadUrl_(request.a5));
+			return done($elm$http$Http$BadUrl_(request.bc));
 		}
 
 		_Http_configureRequest(xhr, request);
@@ -4415,9 +4415,9 @@ function _Http_configureRequest(xhr, request)
 	{
 		xhr.setRequestHeader(headers.a.a, headers.a.b);
 	}
-	xhr.timeout = request.aC.a || 0;
+	xhr.timeout = request.aE.a || 0;
 	xhr.responseType = request.G.d;
-	xhr.withCredentials = request.aK;
+	xhr.withCredentials = request.aM;
 }
 
 
@@ -4438,9 +4438,9 @@ function _Http_toResponse(toBody, xhr)
 function _Http_toMetadata(xhr)
 {
 	return {
-		a5: xhr.responseURL,
-		a1: xhr.status,
-		a2: xhr.statusText,
+		bc: xhr.responseURL,
+		a7: xhr.status,
+		a8: xhr.statusText,
 		ae: _Http_parseHeaders(xhr.getAllResponseHeaders())
 	};
 }
@@ -4536,15 +4536,15 @@ function _Http_track(router, xhr, tracker)
 	xhr.upload.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Sending({
-			a0: event.loaded,
-			az: event.total
+			a6: event.loaded,
+			aA: event.total
 		}))));
 	});
 	xhr.addEventListener('progress', function(event) {
 		if (xhr.c) { return; }
 		_Scheduler_rawSpawn(A2($elm$core$Platform$sendToSelf, router, _Utils_Tuple2(tracker, $elm$http$Http$Receiving({
-			a_: event.loaded,
-			az: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
+			a4: event.loaded,
+			aA: event.lengthComputable ? $elm$core$Maybe$Just(event.total) : $elm$core$Maybe$Nothing
 		}))));
 	});
 }
@@ -5235,7 +5235,7 @@ var $elm$url$Url$Http = 0;
 var $elm$url$Url$Https = 1;
 var $elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
-		return {ad: fragment, ag: host, an: path, ap: port_, as: protocol, at: query};
+		return {ad: fragment, ag: host, ao: path, aq: port_, at: protocol, au: query};
 	});
 var $elm$core$String$contains = _String_contains;
 var $elm$core$String$length = _String_length;
@@ -5519,7 +5519,7 @@ var $author$project$Main$Global = function (a) {
 };
 var $author$project$Main$Model = F4(
 	function (key, url, global, page) {
-		return {aS: global, ai: key, aZ: page, a5: url};
+		return {aY: global, aj: key, a3: page, bc: url};
 	});
 var $author$project$Main$Page = function (a) {
 	return {$: 3, a: a};
@@ -6160,8 +6160,8 @@ var $elm$url$Url$Parser$parse = F2(
 				A5(
 					$elm$url$Url$Parser$State,
 					_List_Nil,
-					$elm$url$Url$Parser$preparePath(url.an),
-					$elm$url$Url$Parser$prepareQuery(url.at),
+					$elm$url$Url$Parser$preparePath(url.ao),
+					$elm$url$Url$Parser$prepareQuery(url.au),
 					url.ad,
 					$elm$core$Basics$identity)));
 	});
@@ -6351,7 +6351,7 @@ var $author$project$Generated$Route$routes = $elm$url$Url$Parser$oneOf(
 			A2(
 				$elm$url$Url$Parser$map,
 				function (param1) {
-					return {am: param1};
+					return {an: param1};
 				},
 				A2(
 					$elm$url$Url$Parser$slash,
@@ -6435,7 +6435,7 @@ var $ryannhg$elm_spa$Spa$Advanced$static = function (options) {
 			function (_v0, _v1) {
 				return _Utils_Tuple3(0, $elm$core$Platform$Cmd$none, $elm$core$Platform$Cmd$none);
 			}),
-		a3: F2(
+		a9: F2(
 			function (_v2, _v3) {
 				return $elm$core$Platform$Sub$none;
 			}),
@@ -6443,9 +6443,9 @@ var $ryannhg$elm_spa$Spa$Advanced$static = function (options) {
 			function (_v4, _v5, model) {
 				return _Utils_Tuple3(model, $elm$core$Platform$Cmd$none, $elm$core$Platform$Cmd$none);
 			}),
-		a6: F2(
+		bd: F2(
 			function (_v6, _v7) {
-				return options.a6;
+				return options.bd;
 			})
 	};
 };
@@ -6458,10 +6458,10 @@ var $author$project$Pages$About$view = {
 		[
 			$elm$html$Html$text('About')
 		]),
-	aD: 'About'
+	aF: 'About'
 };
 var $author$project$Pages$About$page = $author$project$Page$static(
-	{a6: $author$project$Pages$About$view});
+	{bd: $author$project$Pages$About$view});
 var $elm$core$Basics$always = F2(
 	function (a, _v0) {
 		return a;
@@ -6477,7 +6477,7 @@ var $ryannhg$elm_spa$Spa$Advanced$element = function (page) {
 				}(
 					page.k(flags));
 			}),
-		a3: $elm$core$Basics$always(page.a3),
+		a9: $elm$core$Basics$always(page.a9),
 		n: F3(
 			function (_v2, msg, model) {
 				return function (_v3) {
@@ -6487,7 +6487,7 @@ var $ryannhg$elm_spa$Spa$Advanced$element = function (page) {
 				}(
 					A2(page.n, msg, model));
 			}),
-		a6: $elm$core$Basics$always(page.a6)
+		bd: $elm$core$Basics$always(page.bd)
 	};
 };
 var $ryannhg$elm_spa$Spa$element = $ryannhg$elm_spa$Spa$Advanced$element;
@@ -6514,7 +6514,7 @@ var $author$project$Pages$Categories$Create$Success = function (a) {
 var $author$project$Services$Categories$apiUrl = 'http://127.0.0.1:8001/api/categories';
 var $author$project$Services$Categories$Category = F2(
 	function (categoryId, categoryName) {
-		return {Z: categoryId, aM: categoryName};
+		return {Z: categoryId, aO: categoryName};
 	});
 var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$json$Json$Decode$int = _Json_decodeInt;
@@ -6619,7 +6619,7 @@ var $elm$http$Http$resolve = F2(
 			case 3:
 				var metadata = response.a;
 				return $elm$core$Result$Err(
-					$elm$http$Http$BadStatus(metadata.a1));
+					$elm$http$Http$BadStatus(metadata.a7));
 			default:
 				var body = response.b;
 				return A2(
@@ -6652,7 +6652,7 @@ var $elm$http$Http$Request = function (a) {
 };
 var $elm$http$Http$State = F2(
 	function (reqs, subs) {
-		return {av: reqs, aA: subs};
+		return {aw: reqs, aB: subs};
 	});
 var $elm$http$Http$init = $elm$core$Task$succeed(
 	A2($elm$http$Http$State, $elm$core$Dict$empty, _List_Nil));
@@ -6696,7 +6696,7 @@ var $elm$http$Http$updateReqs = F3(
 					return A2(
 						$elm$core$Task$andThen,
 						function (pid) {
-							var _v4 = req.aE;
+							var _v4 = req.aG;
 							if (_v4.$ === 1) {
 								return A3($elm$http$Http$updateReqs, router, otherCmds, reqs);
 							} else {
@@ -6726,7 +6726,7 @@ var $elm$http$Http$onEffects = F4(
 				return $elm$core$Task$succeed(
 					A2($elm$http$Http$State, reqs, subs));
 			},
-			A3($elm$http$Http$updateReqs, router, cmds, state.av));
+			A3($elm$http$Http$updateReqs, router, cmds, state.aw));
 	});
 var $elm$core$List$maybeCons = F3(
 	function (f, mx, xs) {
@@ -6769,7 +6769,7 @@ var $elm$http$Http$onSelfMsg = F3(
 				A2(
 					$elm$core$List$filterMap,
 					A3($elm$http$Http$maybeSend, router, tracker, progress),
-					state.aA)));
+					state.aB)));
 	});
 var $elm$http$Http$Cancel = function (a) {
 	return {$: 0, a: a};
@@ -6783,14 +6783,14 @@ var $elm$http$Http$cmdMap = F2(
 			var r = cmd.a;
 			return $elm$http$Http$Request(
 				{
-					aK: r.aK,
+					aM: r.aM,
 					Y: r.Y,
 					G: A2(_Http_mapExpect, func, r.G),
 					ae: r.ae,
-					aj: r.aj,
-					aC: r.aC,
+					ak: r.ak,
 					aE: r.aE,
-					a5: r.a5
+					aG: r.aG,
+					bc: r.bc
 				});
 		}
 	});
@@ -6813,11 +6813,11 @@ var $elm$http$Http$subscription = _Platform_leaf('Http');
 var $elm$http$Http$request = function (r) {
 	return $elm$http$Http$command(
 		$elm$http$Http$Request(
-			{aK: false, Y: r.Y, G: r.G, ae: r.ae, aj: r.aj, aC: r.aC, aE: r.aE, a5: r.a5}));
+			{aM: false, Y: r.Y, G: r.G, ae: r.ae, ak: r.ak, aE: r.aE, aG: r.aG, bc: r.bc}));
 };
 var $elm$http$Http$post = function (r) {
 	return $elm$http$Http$request(
-		{Y: r.Y, G: r.G, ae: _List_Nil, aj: 'POST', aC: $elm$core$Maybe$Nothing, aE: $elm$core$Maybe$Nothing, a5: r.a5});
+		{Y: r.Y, G: r.G, ae: _List_Nil, ak: 'POST', aE: $elm$core$Maybe$Nothing, aG: $elm$core$Maybe$Nothing, bc: r.bc});
 };
 var $author$project$Services$Categories$addCategoryRequest = F2(
 	function (categoryName, onSave) {
@@ -6826,7 +6826,7 @@ var $author$project$Services$Categories$addCategoryRequest = F2(
 				Y: $elm$http$Http$jsonBody(
 					$author$project$Services$Categories$encodeCategoryName(categoryName)),
 				G: A2($elm$http$Http$expectJson, onSave, $author$project$Services$Categories$categoryDecoder),
-				a5: $author$project$Services$Categories$apiUrl
+				bc: $author$project$Services$Categories$apiUrl
 			});
 	});
 var $author$project$Services$Categories$addCategory = F2(
@@ -6990,7 +6990,7 @@ var $author$project$Generated$Route$toHref = function (route) {
 				return _List_fromArray(
 					['images', 'create']);
 			default:
-				var param1 = route.a.am;
+				var param1 = route.a.an;
 				return _List_fromArray(
 					['categories', param1]);
 		}
@@ -7048,7 +7048,7 @@ var $author$project$Pages$Categories$Create$view = function (model) {
 									]))
 							]))
 					]),
-				aD: 'Création de catégories'
+				aF: 'Création de catégories'
 			};
 		case 1:
 			return {
@@ -7056,7 +7056,7 @@ var $author$project$Pages$Categories$Create$view = function (model) {
 					[
 						$elm$html$Html$text('Impossible d\'ajouter la catégorie.')
 					]),
-				aD: 'Création de catégories'
+				aF: 'Création de catégories'
 			};
 		case 2:
 			return {
@@ -7064,7 +7064,7 @@ var $author$project$Pages$Categories$Create$view = function (model) {
 					[
 						$elm$html$Html$text('Ajout de la catégorie...')
 					]),
-				aD: 'Création de catégories'
+				aF: 'Création de catégories'
 			};
 		default:
 			var category = model.a;
@@ -7076,7 +7076,7 @@ var $author$project$Pages$Categories$Create$view = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('La catégorie ' + (category.aM + ' à été créé'))
+								$elm$html$Html$text('La catégorie ' + (category.aO + ' à été créé'))
 							])),
 						A2(
 						$elm$html$Html$a,
@@ -7110,12 +7110,12 @@ var $author$project$Pages$Categories$Create$view = function (model) {
 									]))
 							]))
 					]),
-				aD: 'Création de catégories'
+				aF: 'Création de catégories'
 			};
 	}
 };
 var $author$project$Pages$Categories$Create$page = $author$project$Page$element(
-	{k: $author$project$Pages$Categories$Create$init, a3: $author$project$Pages$Categories$Create$subscriptions, n: $author$project$Pages$Categories$Create$update, a6: $author$project$Pages$Categories$Create$view});
+	{k: $author$project$Pages$Categories$Create$init, a9: $author$project$Pages$Categories$Create$subscriptions, n: $author$project$Pages$Categories$Create$update, bd: $author$project$Pages$Categories$Create$view});
 var $author$project$Pages$Categories$Dynamic$Loading = {$: 2};
 var $author$project$Pages$Categories$Dynamic$OnCategoryFetch = function (a) {
 	return {$: 3, a: a};
@@ -7126,7 +7126,7 @@ var $author$project$Services$Categories$categoryByIdUrl = function (categoryId) 
 var $elm$http$Http$emptyBody = _Http_emptyBody;
 var $elm$http$Http$get = function (r) {
 	return $elm$http$Http$request(
-		{Y: $elm$http$Http$emptyBody, G: r.G, ae: _List_Nil, aj: 'GET', aC: $elm$core$Maybe$Nothing, aE: $elm$core$Maybe$Nothing, a5: r.a5});
+		{Y: $elm$http$Http$emptyBody, G: r.G, ae: _List_Nil, ak: 'GET', aE: $elm$core$Maybe$Nothing, aG: $elm$core$Maybe$Nothing, bc: r.bc});
 };
 var $author$project$Services$Categories$fetchCategory = F2(
 	function (categoryId, onFetch) {
@@ -7135,7 +7135,7 @@ var $author$project$Services$Categories$fetchCategory = F2(
 			return $elm$http$Http$get(
 				{
 					G: A2($elm$http$Http$expectJson, onFetch, $author$project$Services$Categories$categoryDecoder),
-					a5: $author$project$Services$Categories$categoryByIdUrl(id)
+					bc: $author$project$Services$Categories$categoryByIdUrl(id)
 				});
 		} else {
 			return $elm$core$Platform$Cmd$none;
@@ -7146,7 +7146,7 @@ var $author$project$Pages$Categories$Dynamic$init = function (flags) {
 		$author$project$Pages$Categories$Dynamic$Loading,
 		A2(
 			$author$project$Services$Categories$fetchCategory,
-			$elm$core$String$toInt(flags.am),
+			$elm$core$String$toInt(flags.an),
 			$author$project$Pages$Categories$Dynamic$OnCategoryFetch));
 };
 var $author$project$Pages$Categories$Dynamic$subscriptions = function (model) {
@@ -7171,7 +7171,7 @@ var $author$project$Services$Categories$encodeCategory = function (category) {
 			$elm$json$Json$Encode$int(category.Z)),
 			_Utils_Tuple2(
 			'categoryName',
-			$elm$json$Json$Encode$string(category.aM))
+			$elm$json$Json$Encode$string(category.aO))
 		]);
 	return $elm$json$Json$Encode$object(attributes);
 };
@@ -7183,10 +7183,10 @@ var $author$project$Services$Categories$updateCategoryRequest = F2(
 					$author$project$Services$Categories$encodeCategory(category)),
 				G: A2($elm$http$Http$expectJson, onUpdate, $author$project$Services$Categories$categoryDecoder),
 				ae: _List_Nil,
-				aj: 'PUT',
-				aC: $elm$core$Maybe$Nothing,
+				ak: 'PUT',
 				aE: $elm$core$Maybe$Nothing,
-				a5: $author$project$Services$Categories$categoryByIdUrl(category.Z)
+				aG: $elm$core$Maybe$Nothing,
+				bc: $author$project$Services$Categories$categoryByIdUrl(category.Z)
 			});
 	});
 var $author$project$Services$Categories$updateCategory = F2(
@@ -7202,7 +7202,7 @@ var $author$project$Pages$Categories$Dynamic$update = F2(
 					var category = model.a;
 					return _Utils_Tuple2(
 						$author$project$Pages$Categories$Dynamic$Waiting(
-							{Z: category.Z, aM: categoryName}),
+							{Z: category.Z, aO: categoryName}),
 						$elm$core$Platform$Cmd$none);
 				} else {
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
@@ -7269,7 +7269,7 @@ var $author$project$Pages$Categories$Dynamic$view = function (model) {
 											[
 												$elm$html$Html$Attributes$type_('text'),
 												$elm$html$Html$Attributes$placeholder('Nom de la catégorie'),
-												$elm$html$Html$Attributes$value(category.aM),
+												$elm$html$Html$Attributes$value(category.aO),
 												$elm$html$Html$Events$onInput($author$project$Pages$Categories$Dynamic$SetCategoryName),
 												$elm$html$Html$Attributes$id('categoryInput')
 											]),
@@ -7287,7 +7287,7 @@ var $author$project$Pages$Categories$Dynamic$view = function (model) {
 									]))
 							]))
 					]),
-				aD: 'Modification d\'une catégorie'
+				aF: 'Modification d\'une catégorie'
 			};
 		case 1:
 			return {
@@ -7295,7 +7295,7 @@ var $author$project$Pages$Categories$Dynamic$view = function (model) {
 					[
 						$elm$html$Html$text('Impossible de récupérer ou mettre à jours la catégorie')
 					]),
-				aD: 'Modification d\'une catégorie'
+				aF: 'Modification d\'une catégorie'
 			};
 		case 2:
 			return {
@@ -7303,7 +7303,7 @@ var $author$project$Pages$Categories$Dynamic$view = function (model) {
 					[
 						$elm$html$Html$text('Chargement...')
 					]),
-				aD: 'Modification d\'une catégorie'
+				aF: 'Modification d\'une catégorie'
 			};
 		default:
 			var category = model.a;
@@ -7315,7 +7315,7 @@ var $author$project$Pages$Categories$Dynamic$view = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('La catégorie ' + (category.aM + ' à été mise à jours'))
+								$elm$html$Html$text('La catégorie ' + (category.aO + ' à été mise à jours'))
 							])),
 						A2(
 						$elm$html$Html$a,
@@ -7330,12 +7330,12 @@ var $author$project$Pages$Categories$Dynamic$view = function (model) {
 								$elm$html$Html$text('Retour à la liste des catégories')
 							]))
 					]),
-				aD: 'Modification d\'une catégorie'
+				aF: 'Modification d\'une catégorie'
 			};
 	}
 };
 var $author$project$Pages$Categories$Dynamic$page = $author$project$Page$element(
-	{k: $author$project$Pages$Categories$Dynamic$init, a3: $author$project$Pages$Categories$Dynamic$subscriptions, n: $author$project$Pages$Categories$Dynamic$update, a6: $author$project$Pages$Categories$Dynamic$view});
+	{k: $author$project$Pages$Categories$Dynamic$init, a9: $author$project$Pages$Categories$Dynamic$subscriptions, n: $author$project$Pages$Categories$Dynamic$update, bd: $author$project$Pages$Categories$Dynamic$view});
 var $author$project$Pages$Categories$Top$Loading = {$: 1};
 var $author$project$Pages$Categories$Top$OnFetchCategories = function (a) {
 	return {$: 0, a: a};
@@ -7346,7 +7346,7 @@ var $author$project$Services$Categories$fetchCategories = function (onFetch) {
 	return $elm$http$Http$get(
 		{
 			G: A2($elm$http$Http$expectJson, onFetch, $author$project$Services$Categories$categoriesDecoder),
-			a5: $author$project$Services$Categories$apiUrl
+			bc: $author$project$Services$Categories$apiUrl
 		});
 };
 var $author$project$Pages$Categories$Top$init = function (_v0) {
@@ -7372,10 +7372,10 @@ var $author$project$Services$Categories$deleteCategoryRequest = F2(
 				Y: $elm$http$Http$jsonBody($elm$json$Json$Encode$null),
 				G: A2($elm$http$Http$expectJson, onDelete, $author$project$Services$Categories$categoryDecoder),
 				ae: _List_Nil,
-				aj: 'DELETE',
-				aC: $elm$core$Maybe$Nothing,
+				ak: 'DELETE',
 				aE: $elm$core$Maybe$Nothing,
-				a5: $author$project$Services$Categories$categoryByIdUrl(categoryId)
+				aG: $elm$core$Maybe$Nothing,
+				bc: $author$project$Services$Categories$categoryByIdUrl(categoryId)
 			});
 	});
 var $author$project$Services$Categories$deleteCategory = F2(
@@ -7423,7 +7423,7 @@ var $author$project$Pages$Categories$Top$categoryLine = function (category) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text(category.aM)
+						$elm$html$Html$text(category.aO)
 					])),
 				A2(
 				$elm$html$Html$button,
@@ -7445,7 +7445,7 @@ var $author$project$Pages$Categories$Top$categoryLine = function (category) {
 						$author$project$Generated$Route$toHref(
 							$author$project$Generated$Route$Categories_Dynamic(
 								{
-									am: $elm$core$String$fromInt(category.Z)
+									an: $elm$core$String$fromInt(category.Z)
 								})))
 					]),
 				_List_fromArray(
@@ -7481,7 +7481,7 @@ var $author$project$Pages$Categories$Top$view = function (model) {
 									]))
 							]))
 					]),
-				aD: 'Categories.Top'
+				aF: 'Categories.Top'
 			};
 		case 1:
 			return {
@@ -7489,7 +7489,7 @@ var $author$project$Pages$Categories$Top$view = function (model) {
 					[
 						$elm$html$Html$text('Loading')
 					]),
-				aD: 'Categories.Top'
+				aF: 'Categories.Top'
 			};
 		default:
 			var categories = model.a;
@@ -7534,21 +7534,21 @@ var $author$project$Pages$Categories$Top$view = function (model) {
 								$elm$html$Html$text('Ajouter une catégorie')
 							]))
 					]),
-				aD: 'Categories.Top'
+				aF: 'Categories.Top'
 			};
 	}
 };
 var $author$project$Pages$Categories$Top$page = $author$project$Page$element(
-	{k: $author$project$Pages$Categories$Top$init, a3: $author$project$Pages$Categories$Top$subscriptions, n: $author$project$Pages$Categories$Top$update, a6: $author$project$Pages$Categories$Top$view});
+	{k: $author$project$Pages$Categories$Top$init, a9: $author$project$Pages$Categories$Top$subscriptions, n: $author$project$Pages$Categories$Top$update, bd: $author$project$Pages$Categories$Top$view});
 var $author$project$Pages$Home$view = {
 	Y: _List_fromArray(
 		[
 			$elm$html$Html$text('Home')
 		]),
-	aD: 'Home'
+	aF: 'Home'
 };
 var $author$project$Pages$Home$page = $author$project$Page$static(
-	{a6: $author$project$Pages$Home$view});
+	{bd: $author$project$Pages$Home$view});
 var $author$project$Pages$Images$Create$Model = function (image) {
 	return {ah: image};
 };
@@ -7559,7 +7559,7 @@ var $ryannhg$elm_spa$Spa$Advanced$sandbox = function (options) {
 			function (_v0, _v1) {
 				return _Utils_Tuple3(options.k, $elm$core$Platform$Cmd$none, $elm$core$Platform$Cmd$none);
 			}),
-		a3: F2(
+		a9: F2(
 			function (_v2, _v3) {
 				return $elm$core$Platform$Sub$none;
 			}),
@@ -7570,7 +7570,7 @@ var $ryannhg$elm_spa$Spa$Advanced$sandbox = function (options) {
 					$elm$core$Platform$Cmd$none,
 					$elm$core$Platform$Cmd$none);
 			}),
-		a6: $elm$core$Basics$always(options.a6)
+		bd: $elm$core$Basics$always(options.bd)
 	};
 };
 var $ryannhg$elm_spa$Spa$sandbox = $ryannhg$elm_spa$Spa$Advanced$sandbox;
@@ -7626,11 +7626,11 @@ var $author$project$Pages$Images$Create$view = function (model) {
 					])),
 				A2($elm$html$Html$div, _List_Nil, _List_Nil)
 			]),
-		aD: 'Ajout d\'une nouvelle image'
+		aF: 'Ajout d\'une nouvelle image'
 	};
 };
 var $author$project$Pages$Images$Create$page = $author$project$Page$sandbox(
-	{k: $author$project$Pages$Images$Create$init, n: $author$project$Pages$Images$Create$update, a6: $author$project$Pages$Images$Create$view});
+	{k: $author$project$Pages$Images$Create$init, n: $author$project$Pages$Images$Create$update, bd: $author$project$Pages$Images$Create$view});
 var $author$project$Pages$Images$Top$init = {};
 var $author$project$Pages$Images$Top$update = F2(
 	function (msg, model) {
@@ -7642,29 +7642,29 @@ var $author$project$Pages$Images$Top$view = function (model) {
 			[
 				$elm$html$Html$text('Images.Top')
 			]),
-		aD: 'Images.Top'
+		aF: 'Images.Top'
 	};
 };
 var $author$project$Pages$Images$Top$page = $author$project$Page$sandbox(
-	{k: $author$project$Pages$Images$Top$init, n: $author$project$Pages$Images$Top$update, a6: $author$project$Pages$Images$Top$view});
+	{k: $author$project$Pages$Images$Top$init, n: $author$project$Pages$Images$Top$update, bd: $author$project$Pages$Images$Top$view});
 var $author$project$Pages$NotFound$view = {
 	Y: _List_fromArray(
 		[
 			$elm$html$Html$text('NotFound')
 		]),
-	aD: 'NotFound'
+	aF: 'NotFound'
 };
 var $author$project$Pages$NotFound$page = $author$project$Page$static(
-	{a6: $author$project$Pages$NotFound$view});
+	{bd: $author$project$Pages$NotFound$view});
 var $author$project$Pages$Top$view = {
 	Y: _List_fromArray(
 		[
 			$elm$html$Html$text('Top')
 		]),
-	aD: 'Top'
+	aF: 'Top'
 };
 var $author$project$Pages$Top$page = $author$project$Page$static(
-	{a6: $author$project$Pages$Top$view});
+	{bd: $author$project$Pages$Top$view});
 var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
 var $elm$html$Html$map = $elm$virtual_dom$VirtualDom$map;
 var $elm$core$Platform$Cmd$map = _Platform_map;
@@ -7675,14 +7675,14 @@ var $ryannhg$elm_spa$Spa$Advanced$upgrade = F4(
 			j: F2(
 				function (model, global) {
 					return {
-						a3: A2(
+						a9: A2(
 							$elm$core$Platform$Sub$map,
 							toMsg,
-							A2(page.a3, global, model)),
-						a6: A2(
+							A2(page.a9, global, model)),
+						bd: A2(
 							viewMap,
 							toMsg,
-							A2(page.a6, global, model))
+							A2(page.bd, global, model))
 					};
 				}),
 			k: F2(
@@ -7721,7 +7721,7 @@ var $ryannhg$elm_spa$Spa$upgrade = $ryannhg$elm_spa$Spa$Advanced$upgrade(
 					$elm$core$List$map,
 					$elm$html$Html$map(toMsg),
 					doc.Y),
-				aD: doc.aD
+				aF: doc.aF
 			};
 		}));
 var $author$project$Page$upgrade = $ryannhg$elm_spa$Spa$upgrade;
@@ -7761,7 +7761,7 @@ var $author$project$Generated$Pages$init = function (route) {
 };
 var $author$project$Global$Model = F3(
 	function (flags, url, key) {
-		return {aR: flags, ai: key, a5: url};
+		return {aX: flags, aj: key, bc: url};
 	});
 var $author$project$Global$init = F3(
 	function (flags, url, key) {
@@ -7827,7 +7827,7 @@ var $author$project$Generated$Pages$subscriptions = function (model) {
 		$elm$core$Basics$composeR,
 		$author$project$Generated$Pages$bundle(model),
 		function ($) {
-			return $.a3;
+			return $.a9;
 		});
 };
 var $author$project$Global$subscriptions = function (model) {
@@ -7840,13 +7840,13 @@ var $author$project$Main$subscriptions = function (model) {
 				A2(
 				$elm$core$Platform$Sub$map,
 				$author$project$Main$Global,
-				$author$project$Global$subscriptions(model.aS)),
+				$author$project$Global$subscriptions(model.aY)),
 				A2(
 				$elm$core$Platform$Sub$map,
 				$author$project$Main$Page,
 				function (page) {
-					return A2($author$project$Generated$Pages$subscriptions, page, model.aS);
-				}(model.aZ))
+					return A2($author$project$Generated$Pages$subscriptions, page, model.aY);
+				}(model.a3))
 			]));
 };
 var $elm$browser$Browser$Navigation$load = _Browser_load;
@@ -7873,7 +7873,7 @@ var $elm$url$Url$addPrefixed = F3(
 	});
 var $elm$url$Url$toString = function (url) {
 	var http = function () {
-		var _v0 = url.as;
+		var _v0 = url.at;
 		if (!_v0) {
 			return 'http://';
 		} else {
@@ -7887,13 +7887,13 @@ var $elm$url$Url$toString = function (url) {
 		A3(
 			$elm$url$Url$addPrefixed,
 			'?',
-			url.at,
+			url.au,
 			_Utils_ap(
 				A2(
 					$elm$url$Url$addPort,
-					url.ap,
+					url.aq,
 					_Utils_ap(http, url.ag)),
-				url.an)));
+				url.ao)));
 };
 var $author$project$Generated$Pages$update = F2(
 	function (bigMsg, bigModel) {
@@ -7985,7 +7985,7 @@ var $author$project$Global$update = F2(
 			model,
 			A2(
 				$elm$browser$Browser$Navigation$pushUrl,
-				model.ai,
+				model.aj,
 				$author$project$Generated$Route$toHref(route)));
 	});
 var $author$project$Main$update = F2(
@@ -7998,7 +7998,7 @@ var $author$project$Main$update = F2(
 						model,
 						A2(
 							$elm$browser$Browser$Navigation$pushUrl,
-							model.ai,
+							model.aj,
 							$elm$url$Url$toString(url)));
 				} else {
 					var href = msg.a.a;
@@ -8011,14 +8011,14 @@ var $author$project$Main$update = F2(
 				var _v1 = A2(
 					$author$project$Generated$Pages$init,
 					$author$project$Main$fromUrl(url),
-					model.aS);
+					model.aY);
 				var page = _v1.a;
 				var pageCmd = _v1.b;
 				var globalCmd = _v1.c;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{aZ: page, a5: url}),
+						{a3: page, bc: url}),
 					$elm$core$Platform$Cmd$batch(
 						_List_fromArray(
 							[
@@ -8027,24 +8027,24 @@ var $author$project$Main$update = F2(
 							])));
 			case 2:
 				var globalMsg = msg.a;
-				var _v2 = A2($author$project$Global$update, globalMsg, model.aS);
+				var _v2 = A2($author$project$Global$update, globalMsg, model.aY);
 				var global = _v2.a;
 				var globalCmd = _v2.b;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{aS: global}),
+						{aY: global}),
 					A2($elm$core$Platform$Cmd$map, $author$project$Main$Global, globalCmd));
 			default:
 				var pageMsg = msg.a;
-				var _v3 = A3($author$project$Generated$Pages$update, pageMsg, model.aZ, model.aS);
+				var _v3 = A3($author$project$Generated$Pages$update, pageMsg, model.a3, model.aY);
 				var page = _v3.a;
 				var pageCmd = _v3.b;
 				var globalCmd = _v3.c;
 				return _Utils_Tuple2(
 					_Utils_update(
 						model,
-						{aZ: page}),
+						{a3: page}),
 					$elm$core$Platform$Cmd$batch(
 						_List_fromArray(
 							[
@@ -8058,7 +8058,7 @@ var $author$project$Generated$Pages$view = function (model) {
 		$elm$core$Basics$composeR,
 		$author$project$Generated$Pages$bundle(model),
 		function ($) {
-			return $.a6;
+			return $.bd;
 		});
 };
 var $elm$html$Html$footer = _VirtualDom_node('footer');
@@ -8154,7 +8154,7 @@ var $author$project$Components$navbar = A2(
 var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
 var $author$project$Components$layout = function (_v0) {
-	var page = _v0.aZ;
+	var page = _v0.a3;
 	return {
 		Y: _List_fromArray(
 			[
@@ -8178,15 +8178,15 @@ var $author$project$Components$layout = function (_v0) {
 						$author$project$Components$footer
 					]))
 			]),
-		aD: page.aD
+		aF: page.aF
 	};
 };
 var $author$project$Global$view = function (_v0) {
-	var page = _v0.aZ;
-	var global = _v0.aS;
-	var toMsg = _v0.a4;
+	var page = _v0.a3;
+	var global = _v0.aY;
+	var toMsg = _v0.bb;
 	return $author$project$Components$layout(
-		{aZ: page});
+		{a3: page});
 };
 var $author$project$Main$view = function (model) {
 	var documentMap = F2(
@@ -8196,20 +8196,20 @@ var $author$project$Main$view = function (model) {
 					$elm$core$List$map,
 					$elm$html$Html$map(fn),
 					doc.Y),
-				aD: doc.aD
+				aF: doc.aF
 			};
 		});
 	return $author$project$Global$view(
 		{
-			aS: model.aS,
-			aZ: A2(
+			aY: model.aY,
+			a3: A2(
 				documentMap,
 				$author$project$Main$Page,
-				A2($author$project$Generated$Pages$view, model.aZ, model.aS)),
-			a4: $author$project$Main$Global
+				A2($author$project$Generated$Pages$view, model.a3, model.aY)),
+			bb: $author$project$Main$Global
 		});
 };
 var $author$project$Main$main = $elm$browser$Browser$application(
-	{k: $author$project$Main$init, aW: $author$project$Main$UrlChanged, aX: $author$project$Main$LinkClicked, a3: $author$project$Main$subscriptions, n: $author$project$Main$update, a6: $author$project$Main$view});
+	{k: $author$project$Main$init, a0: $author$project$Main$UrlChanged, a1: $author$project$Main$LinkClicked, a9: $author$project$Main$subscriptions, n: $author$project$Main$update, bd: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	$elm$json$Json$Decode$succeed(0))(0)}});}(this));
