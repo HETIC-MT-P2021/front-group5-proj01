@@ -2,6 +2,11 @@ body {
   font-family: "Squada One", cursive;
 }
 
+.app-container {
+  width: 85%;
+  margin: 0 auto;
+}
+
 .app-header {
   background-color: #be2d2a;
 }
@@ -39,8 +44,6 @@ body {
   justify-content: space-between;
   align-items: center;
   height: 70px;
-  width: 85%;
-  margin: 0 auto;
   background-color: #fff;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
   border-radius: 5px;
@@ -74,8 +77,6 @@ body {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-gap: 20px;
-  width: 85%;
-  margin: 0 auto;
   padding: 25px 0;
   max-height: 70vh;
   overflow: auto;
@@ -86,8 +87,8 @@ body {
 }
 
 .galery-image-single {
+  height: auto;
   width: 100%;
-  height: 100%;
 }
 
 #categoryUl p {
@@ -108,6 +109,7 @@ body {
   margin-left: 15px;
 }
 
+.addImageButtons,
 .addCategoryButtons {
   color: var(--link--color);
   margin: 15px;
@@ -171,4 +173,58 @@ body {
   border: 1px solid blue;
   font-size: 1.2em;
   padding: 1%;
+}
+
+.details-image-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 20px;
+}
+
+.details-image-single-wrapper {
+  flex: 1;
+  height: unset;
+  margin-right: 50px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.details-image-single {
+  width: 100%;
+  height: auto;
+}
+
+.image-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.form-control {
+  display: flex;
+  margin-top: 5px;
+  margin-bottom: 20px;
+  width: 500px;
+  min-height: 40px;
+  padding: 3px 10px;
+}
+
+textarea {
+  height: 150px;
+}
+
+.galery-image-single-link {
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+option {
+  text-transform: capitalize;
 }

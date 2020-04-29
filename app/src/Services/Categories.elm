@@ -6,7 +6,7 @@ import Json.Encode as Encode
 import Models exposing (Categories, Category)
 
 
-apiUrl = "http://127.0.0.1:8001/api/categories"
+apiUrl = "http://127.0.0.1:8000/api/categories"
 
 fetchCategories :  (Result Http.Error Categories -> msg) -> Cmd msg
 fetchCategories onFetch =

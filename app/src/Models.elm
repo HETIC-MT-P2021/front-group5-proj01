@@ -7,13 +7,13 @@ type alias Category =
 type alias Categories = List Category
 
 type alias Tag = 
-  { tagId : Int
-    , tagName : String
+  { tagName : Int
+    , tagTitle : String
   }
 type alias Tags = List Tag
 
 type alias TagAssoc = 
-  { tagId : Int
+  { tagName : Int
     , imageId : Int
   }
 
